@@ -1,0 +1,54 @@
+/* photosession_all.css */
+
+/* Убедитесь, что отступ сверху достаточно для компенсации высоты заголовка */
+.container {
+    padding-top: 80px; /* Отступ для компенсации высоты заголовка */
+    margin-top: 20px;  /* Дополнительный отступ, чтобы избежать наложения */
+    position: relative;
+    z-index: 1; /* Убедитесь, что контейнер находится выше других элементов */
+}
+
+.photo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.photo-item {
+    position: relative;
+    flex: 1 1 calc(50% - 20px); /* Две фото на экране с учетом отступов */
+    max-width: calc(50% - 20px); /* Две фото на экране с учетом отступов */
+    overflow: hidden; /* Убедитесь, что элементы не выходят за пределы контейнера */
+}
+
+.photo-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.photo-item:hover .photo-overlay {
+    opacity: 1;
+}
+
+.photo-overlay h2, .photo-overlay p {
+    margin: 0;
+    text-align: center;
+}

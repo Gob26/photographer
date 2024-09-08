@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Фотосессии{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/photosession/photosession_all.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="photo-gallery">
+        <div class="photo-item">
+            <a href="#">
+                <img src="{{ url_for('static', filename='img/2.jpg') }}" alt="Фотосессия 1">
+                <div class="photo-overlay">
+                    <h2>Тетя в Шапке</h2>
+                    <p>Сидит на лестнице</p>
+                </div>
+            </a>
+        </div>
+        <div class="photo-item">
+            <a href="#">
+                <img src="{{ url_for('static', filename='img/3.jpg') }}" alt="Фотосессия 2">
+                <div class="photo-overlay">
+                    <h2>Тетя без Шапки</h2>
+                    <p>Сидит в кресле</p>
+                </div>
+            </a>
+        </div>
+        <!-- Добавьте больше заглушек по аналогии -->
+    </div>
+</div>
+{% endblock %}
