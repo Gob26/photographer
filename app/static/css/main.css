@@ -1,0 +1,46 @@
+@import url('fonts.css');
+
+body {
+    background: #212121;
+    color: #fff;
+    background-image: url('../img/background.jpg'); /* Путь к вашему изображению */
+    background-size: cover; /* Растягивает изображение, чтобы покрыть весь экран */
+    background-position: center; /* Центрирует изображение */
+    background-attachment: fixed; /* Фиксирует изображение при прокрутке */
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    padding: 20px;
+}
+
+.content {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    flex: 1 1 auto;
+}
+
+h1 {
+    font-family: Montserrat, sans-serif;
+    font-weight: 200;
+}
+
+.header__img {
+    display: block;
+    width: 48px;
+    height: 48px;
+}
+
+
+
