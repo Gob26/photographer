@@ -1,5 +1,5 @@
 from flask import Flask
-from app.extensions import db
+from app.extensions import db, migrate 
 from .config import Config
 #импортируем роутеры
 from .routes.user import user
