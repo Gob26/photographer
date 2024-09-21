@@ -56,3 +56,7 @@ body {
 .read-more:hover {
     background-color: #1565C0;
 }
+.custom-button-orange {
+    background-color: orange;
+    color: white; /* или любой другой цвет текста */
+}

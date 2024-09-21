@@ -28,6 +28,7 @@ def create():
         content_post = request.form.get('content_post')
         snippet_post = request.form.get('snippet_post')
 
+
         post = Post(title=title_post, content=content_post, snippet=snippet_post)
         
         try:
@@ -35,8 +36,9 @@ def create():
             db.session.commit()
             return redirect('/post')
         except Exception as e:
-            print(str(e))
+            print(f'Ошибка при добавлении поста: {str(e)}')
             return 'При добавлении поста произошла ошибка'
+
     else:
         # Если метод GET, просто отображаем форму
         return render_template('post/create.html')
