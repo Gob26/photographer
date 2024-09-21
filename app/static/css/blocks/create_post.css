@@ -1,0 +1,13 @@
+.dark-grey-form {
+  background-color: #333333;
+}
+
+.dark-grey-form .form-control {
+  background-color: #444444;
+  color: #ffffff;
+  border: 1px solid #555555;
+}
+
+.dark-grey-form .form-control::placeholder {
+  color: #aaaaaa;
+}

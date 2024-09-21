@@ -11,7 +11,7 @@ from .routes.photosession import photosession_all
 def create_app(config_class=Config):
 
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_class) # Инициализация конфигурации
 
     #Регистрация блюпринтов
     app.register_blueprint(user)
@@ -19,11 +19,16 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(contacts)
     app.register_blueprint(photosession_all)
-    db.init_app(app)
+    
+
+    db.init_app(app)                    # Инициализация базы данных
+    migrate.init_app(app, db)           # Инициализация миграции
+
 
     with app.app_context():
         db.create_all()
 
+    return app 
 
 
 

@@ -1,11 +1,14 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Добавление темы{% endblock %}
+{% block title %}Добавление в блог{% endblock %}
 
 {% block content %}
-<form method="post" class="form-control d-flex flex-column gap-2">
-    <input name="subject" type="text" placeholder="Тема" class="form-control">
-    {{ form.student }}
-    <input value="Добавить" type="submit" class="btn btn-success">
+<form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('post.create') }}">
+  <input type="text" name="title_post" placeholder="Название темы" class="form-control mb-2" required>
+  <input type="text" name="content_post" placeholder="Основной текст" class="form-control mb-2" required>
+  <input type="text" name="snippet_post" placeholder="Снипет" class="form-control mb-2" required>
+  <input value="Сохранить" type="submit" class="btn btn-primary">
 </form>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}

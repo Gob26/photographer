@@ -8,7 +8,7 @@ class Post(db.Model):
     title = db.Column(db.String(250), nullable=False)
     content = db.Column(db.Text, nullable=False)
     snippet = db.Column(db.Text, nullable=True)       # под вопросом
-    image = db.Column(db.PickleType, nullable=True)   # храним список ссылок на изображения
+    #image = db.Column(db.PickleType, nullable=True)   # храним список ссылок на изображения
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
