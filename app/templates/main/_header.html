@@ -1,44 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/bootstrap.min.css') }}">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/libs/bootstrap.min.css') }}">!-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <title>My Website</title>
+    <title>A²S</title>
+    <style>
+        /* Настройка шапки */
+        .header {
+            background-color: #1f1f20; /* Светло-серый цвет шапки */
+            padding: 0.07px; /* Уменьшение высоты в 1.7 раза */
+            margin: 20px; /* Увеличение отступов в 2 раза */
+            border-radius: 10px; /* Закругленные углы */
+        }
+
+        /* Логотип камеры */
+        .camera-icon {
+            width: 20px; /* Уменьшение размеров в 1.7 раза */
+            height: 20px; /* Уменьшение размеров в 1.7 раза */
+            margin-right: 11px;
+            position: relative;
+        }
+
+        /* Вспышка камеры в круге объектива */
+        .camera-flash {
+            position: absolute;
+            top: 30%;
+            left: 30%;
+            width: 40%;
+            height: 40%;
+            background-color: #777777; /* Светло-серый цвет вспышки */
+            border-radius: 50%; /* Вспышка только в круге объектива */
+            opacity: 0;
+            transition: opacity 0.1s ease, background-color 0.3s ease;
+        }
+
+        /* Цвет вспышки и ссылок ночью */
+        .night-mode .camera-flash {
+            background-color: orange; /* Оранжевый цвет с 18:00 до 6:00 */
+        }
+
+        /* Цвет ссылок ночью */
+        .night-mode .nav-link:hover {
+            color: #FF9800 !important; /* Оранжевый цвет ссылок ночью */
+        }
+
+        /* Цвет ссылок днем */
+        .nav-link:hover {
+            color: #1976D2 !important; /* Синий цвет ссылок днем */
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .header {
+                margin: 10px; /* Меньшие отступы для мобильных */
+                padding: 4px 0; /* Уменьшенная высота на мобильных */
+            }
+            .navbar-brand {
+                font-size: 20px;
+            }
+            .nav-link {
+                font-size: 14px;
+            }
+        }
+
+        /* Меню навигации (по умолчанию скрыто) */
+        .navbar-collapse {
+            display: none;
+        }
+
+        /* Отображение меню при активном состоянии */
+        .navbar-collapse.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
-<header class="header bg-dark text-white py-3">
+<header class="header">
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">A²S </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Идеи</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('post.create') }}">Добавить </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="photosession_all">Фотосессии</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Обо мне</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contacts">Контакты</a>
-                </li>
-            </ul>
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <svg class="camera-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 17C14.2091 17 16 15.2091 16 13C16 10.7909 14.2091 9 12 9C9.79086 9 8 10.7909 8 13C8 15.2091 9.79086 17 12 17Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect class="camera-flash" x="0" y="0" width="24" height="24" fill="white"/>
+                </svg>
+                A²S
+            </a>
+            <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Идеи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('post.all') }}">Блог</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="photosession_all">Фотосессии</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Обо мне</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contacts">Контакты</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 </header>
 
 <script src="{{ url_for('static', filename='js/libs/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+    // Обновление режима шапки (день/ночь)
+    function updateHeaderMode() {
+        const now = new Date();
+        const moscowTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
+        const hours = moscowTime.getHours();
+        const isNightTime = hours >= 18 || hours < 6; // Ночь с 18:00 до 6:00
+        document.querySelector('.header').classList.toggle('night-mode', isNightTime); // Переключение режимов
+
+        // Изменение цвета ссылок
+        const flash = document.querySelector('.camera-flash');
+        if (isNightTime) {
+            flash.style.backgroundColor = 'orange'; // Оранжевый ночью
+        } else {
+            flash.style.backgroundColor = '#1976D2'; // Синий днем
+        }
+    }
+
+    // Вспышка камеры
+    function flashCamera() {
+        const flash = document.querySelector('.camera-flash');
+        flash.style.opacity = '1';
+        setTimeout(() => {
+            flash.style.opacity = '0';
+        }, 100);
+    }
+
+    // Открытие и закрытие мобильного меню
+    const toggler = document.querySelector('.navbar-toggler');
+    const menu = document.querySelector('.navbar-collapse');
+
+    toggler.addEventListener('click', function() {
+        menu.classList.toggle('show'); // Переключение видимости меню
+    });
+
+    // Инициализация переключения режимов
+    updateHeaderMode();
+    setInterval(updateHeaderMode, 60000); // Обновление каждые 60 секунд
+    setInterval(flashCamera, 3000); // Вспышка каждые 3 секунды
+</script>
 
 </body>
 </html>

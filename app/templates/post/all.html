@@ -16,7 +16,9 @@
                         <h2 class="blog-title">{{ post.title }}</h2>
                         <p class="blog-snippet">{{ post.snippet }}</p>
                         <p class="blog-date">{{ post.created_at.strftime('%d.%m.%Y') }}</p>
-                        <a href="{{ url_for('post.post_detail', post_id=post.id) }}" class="read-more custom-button">Читать далее</a>
+                        <div class="button-container">
+                            <a href="{{ url_for('post.post_detail', post_id=post.id) }}" class="read-more custom-button">Читать далее</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -10,20 +10,17 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-}
-
-.blog-card:hover {
-    transform: translateY(-5px);
-}
-
-.blog-image {
-    height: 200px;
-    background-size: cover;
-    background-position: center;
+    height: 300px; /* Фиксированная высота */
+    display: flex;
+    flex-direction: column; /* Вертикальная ориентация */
 }
 
 .blog-content {
     padding: 20px;
+    flex-grow: 1; /* Позволяет блоку контента занимать доступное пространство */
+    display: flex;
+    flex-direction: column; /* Вертикальная ориентация для внутреннего контента */
+    justify-content: space-between; /* Разделяет контент и кнопку */
 }
 
 .blog-title {
@@ -43,6 +40,11 @@ body {
     font-size: 0.8rem;
 }
 
+.button-container {
+    text-align: center; /* Центрирование кнопки */
+    margin-top: auto; /* Сохраняет контейнер внизу */
+}
+
 .read-more {
     background-color: #1976D2;
     color: white;
@@ -56,7 +58,20 @@ body {
 .read-more:hover {
     background-color: #1565C0;
 }
+
 .custom-button-orange {
     background-color: orange;
-    color: white; /* или любой другой цвет текста */
+    color: white; /* Или любой другой цвет текста */
+}
+
+@keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, 5px); }
+    75% { transform: translate(-5px, -5px); }
+    100% { transform: translate(0); }
+}
+
+.blog-card.shake {
+    animation: shake 0.5s ease-in-out infinite;
 }

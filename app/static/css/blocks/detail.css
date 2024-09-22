@@ -1,0 +1,18 @@
+.post-detail {
+    margin: 20px 0;
+}
+
+.post-snippet {
+    font-style: italic;
+    color: #555;
+}
+
+.post-content {
+    margin-top: 15px;
+}
+
+.post-meta {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #888;
+}

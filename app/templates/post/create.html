@@ -4,11 +4,20 @@
 
 {% block content %}
 <form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('post.create') }}">
-  <input type="text" name="title_post" placeholder="Название темы" class="form-control mb-2" required>
-  <input type="text" name="content_post" placeholder="Основной текст" class="form-control mb-2" required>
-  <input type="text" name="snippet_post" placeholder="Снипет" class="form-control mb-2" required>
-  <input value="Сохранить" type="submit" class="btn btn-primary">
+    <input type="text" name="title_post" placeholder="Название темы" class="form-control mb-2" required>
+    <textarea name="content_post" id="editor" placeholder="Основной текст" class="form-control mb-2" required></textarea>
+    <input type="text" name="snippet_post" placeholder="Снипет" class="form-control mb-2" required>
+    <input value="Сохранить" type="submit" class="btn btn-primary">
 </form>
+
+<!-- Подключение CKEditor для редактирования текста -->
+<script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+<script>
+    // Инициализация CKEditor для текстового поля
+    CKEDITOR.replace('content_post', {
+        height: 300 // Настройка высоты редактора
+    });
+</script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}
