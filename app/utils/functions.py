@@ -1,13 +1,19 @@
 from PIL import Image
 import secrets
+from flask import current_app
 import os
 
 
-def save_picture(picture):
+def save_picture(picture):   #Сохраняем уменьшенное изображение и передаем кго новое имя
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(picture.filename) # разделяем имя файла и расширение
-    picture_fn = random_hex + f_ext
-
+    picture_fn = random_hex + f_ext               # формируем имя файла  
+    picture_path = os.path.join(current_app.config['SERVER_PATH'], picture_fn) # путь к файлу
+    output_size = (125, 125)
+    i = Image.open(picture)      # открываем изображение
+    i.thumbnail(output_size)     # изменяем размер
+    i.save(picture_path)            
+    return picture_fn           # возвращаем измененное имя для базы данных
 
 
 

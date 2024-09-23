@@ -1,10 +1,13 @@
 import os
 
+import os
+
 class Config(object):
-    APPNAME = 'app'
-    ROOT = os.path.abspath(APPNAME)
-    #UPLOAD_PATH = '/static/upload/'
-    #SERVER_PATH = ROOT + UPLOAD_PATH
+    APPNAME = 'app'                                    # Имя приложения
+    ROOT = os.path.abspath(os.path.dirname(__file__))  # Корень приложения (файл, где находится конфигурация)
+    UPLOAD_PATH = os.path.join('static', 'upload')     # Путь для загрузки файлов
+    SERVER_PATH = os.path.join(ROOT, UPLOAD_PATH)      # Полный путь к папке загрузок
+ 
 
     USER = os.environ.get('POSTGRES_USER', 'anna')
     PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'annaanna')
