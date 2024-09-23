@@ -3,10 +3,11 @@
 {% block title %}Добавление в блог{% endblock %}
 
 {% block content %}
-<form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('post.create') }}">
+<form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('post.create') }}" enctype="multipart/form-data">
     <input type="text" name="title_post" placeholder="Название темы" class="form-control mb-2" required>
     <textarea name="content_post" id="editor" placeholder="Основной текст" class="form-control mb-2" required></textarea>
     <input type="text" name="snippet_post" placeholder="Снипет" class="form-control mb-2" required>
+    <input type="file" name="images" class="form-control mb-2" accept="image/*" multiple>
     <input value="Сохранить" type="submit" class="btn btn-primary">
 </form>
 

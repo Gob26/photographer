@@ -5,14 +5,47 @@
 .post-snippet {
     font-style: italic;
     color: #555;
+    margin-bottom: 20px;
+}
+
+.post-image {
+    max-width: 30%; /* Уменьшаем размер изображения в 2 раза (было 40%) */
+    margin-bottom: 25px;
+}
+
+.image-left {
+    float: left;
+    margin-right: 20px;
+}
+
+.image-right {
+    float: right;
+    margin-left: 20px;
+}
+
+.post-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
 }
 
 .post-content {
     margin-top: 15px;
+    overflow: hidden;
 }
 
 .post-meta {
     margin-top: 20px;
     font-size: 14px;
     color: #888;
+    clear: both;
+}
+
+.btn-primary {
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.clearfix {
+    clear: both;
 }

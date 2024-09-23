@@ -3,20 +3,39 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/post/detail.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/detail.css') }}">
+{% endblock %}
+
+{% block head %}
+    <meta name="description" content="{{ post.snippet }}"> <!-- Метаописание для поисковых систем -->
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="post-detail">
-        <h1>{{ post.title }}</h1>
+
         <p class="post-snippet">{{ post.snippet }}</p>
+
         <div class="post-content">
-            {{ post.content | safe }} <!-- Отображение контента с сохранением HTML -->
+            <!-- Отображение всех изображений -->
+            {% if post.images %}
+                {% for image in post.images %}
+                    <div class="post-image {% if loop.index % 2 == 0 %}image-right{% else %}image-left{% endif %}">
+                        <img src="{{ url_for('static', filename='img/blog/' + image) }}" alt="{{ post.title }} - Image {{ loop.index }}">
+                    </div>
+                    {% if loop.index % 2 == 0 %}
+                        <div class="clearfix"></div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {{ post.content | safe }}
         </div>
+
         <div class="post-meta">
             <p>Дата публикации: {{ post.created_at.strftime('%Y-%m-%d') }}</p>
         </div>
+
         <a href="{{ url_for('post.all') }}" class="btn btn-primary">Вернуться к списку постов</a>
     </div>
 </div>

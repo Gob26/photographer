@@ -3,22 +3,15 @@
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data" class="form-control d-flex flex-column gap-2">
+    <form class="dark-grey-form p-3 rounded" method="post" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        {{ form.name(class="form-control", placeholder="ФИО") }}
-
-        {{ form.login(class="form-control", placeholder="Логин") }}
-        {% if form.login.errors %}
-            <div class="invalid-feedback" style="display: block!important;">
-            {% for error in form.login.errors %}
-                <span>{{ error }}</span>
-            {% endfor %}
-            </div>
-        {% endif %}
-
-        {{ form.avatar(class="form-control") }}
-        {{ form.password(class="form-control", placeholder="Пароль") }}
-        {{ form.confirm_password(class="form-control", placeholder="Подтвердите пароль") }}
-        {{ form.submit(class="btn btn-success") }}
+        <input type="text" name="name" placeholder="ФИО" class="form-control mb-2" required>
+        <input type="text" name="login" placeholder="Логин" class="form-control mb-2" required>
+        <input type="password" name="password" placeholder="Пароль" class="form-control mb-2" required>
+        <input type="password" name="confirm_password" placeholder="Подтвердите пароль" class="form-control mb-2" required>
+        <input type="file" name="avatar" class="form-control mb-2" accept="image/*">
+        <input value="Зарегистрироваться" type="submit" class="btn btn-primary">
     </form>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}

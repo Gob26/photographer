@@ -1,18 +1,51 @@
-from flask import Blueprint, render_template, request
-from werkzeug.utils import redirect
+import os
+import logging
+from crypt import methods
 
+from flask import Blueprint, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+
+from app.utils.functions import allowed_file
 from ..extensions import db
 from ..models.post import Post
 
+# Настройка логирования
+logging.basicConfig(level=logging.DEBUG)
+
+# Определение базовой директории и UPLOAD_FOLDER
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'static', 'img', 'blog')
+
+# Создаем директорию, если она не существует
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 post = Blueprint('post', __name__)
 
-# Получаем все посты
+
+def save_uploaded_files(files):
+    image_paths = []
+    for file in files:
+        if file and allowed_file(file.filename): # Проверка на допустимый формат
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            logging.debug(f"Attempting to save file to: {file_path}")
+            try:
+                file.save(file_path)
+                image_paths.append(filename)
+                logging.debug(f"File saved successfully: {file_path}")
+            except Exception as e:
+                logging.error(f"Error saving file {filename}: {str(e)}")
+        else:
+            logging.warning(f"Invalid file or format: {file.filename}")
+    return image_paths
+
+
 @post.route('/post', methods=['POST', 'GET'])
 def all():
-    posts = Post.query.all()   # берем все статьи
-    return render_template('post/all.html', posts=posts)  # передаем посты
+    posts = Post.query.all()
+    return render_template('post/all.html', posts=posts)
 
-# Получаем детали поста
+
 @post.route('/post/<int:post_id>', methods=['GET'])
 def post_detail(post_id):
     post = Post.query.get(post_id)
@@ -20,7 +53,7 @@ def post_detail(post_id):
         return 'Пост не найден', 404
     return render_template('post/detail.html', post=post)
 
-# Создание поста
+
 @post.route('/post/create', methods=['POST', 'GET'])
 def create():
     if request.method == 'POST':
@@ -28,17 +61,28 @@ def create():
         content_post = request.form.get('content_post')
         snippet_post = request.form.get('snippet_post')
 
+        uploaded_files = request.files.getlist('images')
+        image_paths = save_uploaded_files(uploaded_files)
 
-        post = Post(title=title_post, content=content_post, snippet=snippet_post)
-        
+        if not image_paths:
+            logging.warning("No valid images uploaded.")
+            return 'Не загружены допустимые изображения', 400
+
+        post = Post(title=title_post, content=content_post, snippet=snippet_post, images=image_paths)
+
         try:
             db.session.add(post)
             db.session.commit()
-            return redirect('/post')
+            logging.info(f"Post created successfully: {title_post}")
+            return redirect(url_for('post.all'))
         except Exception as e:
-            print(f'Ошибка при добавлении поста: {str(e)}')
-            return 'При добавлении поста произошла ошибка'
-
+            logging.error(f"Error adding post to database: {str(e)}")
+            return 'При добавлении поста произошла ошибка', 500
     else:
-        # Если метод GET, просто отображаем форму
         return render_template('post/create.html')
+
+
+@post.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
+def update():
+    pass
+

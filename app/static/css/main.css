@@ -1,8 +1,8 @@
 @import url('fonts.css');
 
 body {
-    background: #212121;
-    color: #fff;
+    background: #212121; /* Цвет фона */
+    color: #e2e0e0; /* Цвет текста */
     background-image: url('../img/background.jpg'); /* Путь к вашему изображению */
     background-size: cover; /* Растягивает изображение, чтобы покрыть весь экран */
     background-position: center; /* Центрирует изображение */
@@ -10,6 +10,13 @@ body {
     margin: 0;
     padding: 0;
 }
+
+/* Применяем черную обводку для текста */
+body, p, h1, h2, h3, h4, h5, h6, a, span {
+    text-shadow: 1px 1px 2px #000; /* Черная тень вокруг текста */
+    color: #e2e0e0; /* Цвет текста */
+}
+
 
 .page {
     overflow-x: hidden;
@@ -34,6 +41,7 @@ body {
 h1 {
     font-family: Montserrat, sans-serif;
     font-weight: 200;
+    color: #1976D2; /* Синий цвет для заголовка */
 }
 
 .header__img {
@@ -42,5 +50,9 @@ h1 {
     height: 48px;
 }
 
-
-
+.title {
+    font-family: Montserrat, sans-serif;
+    font-weight: 200;
+    color: #1976D2; /* Применяем синий цвет */
+    font-size: 2rem; /* Можно регулировать размер шрифта */
+}

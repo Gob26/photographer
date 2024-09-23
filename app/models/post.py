@@ -1,3 +1,5 @@
+from sqlalchemy import JSON
+
 from ..extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
@@ -8,7 +10,7 @@ class Post(db.Model):
     title = db.Column(db.String(350), nullable=False)
     content = db.Column(db.Text, nullable=False)
     snippet = db.Column(db.String(350), nullable=True)       # под вопросом
-    #image = db.Column(db.PickleType, nullable=True)   # храним список ссылок на изображения
+    images = db.Column(JSON)   # храним список ссылок на изображения
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
