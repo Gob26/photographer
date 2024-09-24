@@ -16,11 +16,7 @@ def save_picture(picture):   #Сохраняем уменьшенное изоб
     return picture_fn           # возвращаем измененное имя для базы данных
 
 
-
-
-
-
-def compress_image(image_path, output_path, quality=85):
+def compress_image(image_path, output_path, quality=85): #сжимаем и переводим в формат webp
     # Открываем изображение
     img = Image.open(image_path)
 

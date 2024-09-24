@@ -10,17 +10,18 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    height: 300px; /* Фиксированная высота */
+    height: 300px;
     display: flex;
-    flex-direction: column; /* Вертикальная ориентация */
+    flex-direction: column;
+    position: relative; /* Добавлено для позиционирования кнопок */
 }
 
 .blog-content {
     padding: 20px;
-    flex-grow: 1; /* Позволяет блоку контента занимать доступное пространство */
+    flex-grow: 1;
     display: flex;
-    flex-direction: column; /* Вертикальная ориентация для внутреннего контента */
-    justify-content: space-between; /* Разделяет контент и кнопку */
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .blog-title {
@@ -41,8 +42,8 @@ body {
 }
 
 .button-container {
-    text-align: center; /* Центрирование кнопки */
-    margin-top: auto; /* Сохраняет контейнер внизу */
+    text-align: center;
+    margin-top: auto;
 }
 
 .read-more {
@@ -61,7 +62,42 @@ body {
 
 .custom-button-orange {
     background-color: orange;
-    color: white; /* Или любой другой цвет текста */
+    color: white;
+}
+
+/* Стили для новых кнопок действий */
+.action-buttons {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.btn-action {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-edit {
+    background-color: #808080;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #ff4444;
+    color: white;
+}
+
+.btn-action:hover {
+    opacity: 0.8;
 }
 
 @keyframes shake {

@@ -1,7 +1,6 @@
 from sqlalchemy import JSON
 
 from ..extensions import db
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
 class Post(db.Model):

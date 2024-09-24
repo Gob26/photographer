@@ -1,8 +1,8 @@
 {% extends 'main/base.html' %}
 
-
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/blog.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 <div class="container mt-4">
     <h1 class="text-center mb-4" style="color: #1976D2;">Наш блог</h1>
@@ -19,6 +19,14 @@
                             <a href="{{ url_for('post.post_detail', post_id=post.id) }}" class="read-more custom-button">Читать далее</a>
                         </div>
                     </div>
+                    <div class="action-buttons">
+                        <button class="btn-action btn-edit" title="Редактировать">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="btn-action btn-delete" title="Удалить">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -28,17 +36,15 @@
     </div>
 </div>
 
-<!-- Добавляем JavaScript для изменения стиля кнопок после 18:00 -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const currentTime = new Date();
         const hours = currentTime.getHours();
 
-        // Проверяем, если текущее время больше или равно 18:00
         if (hours >= 18) {
             const buttons = document.querySelectorAll('.custom-button');
             buttons.forEach(button => {
-                button.classList.add('custom-button-orange'); // Добавляем класс для оранжевого стиля
+                button.classList.add('custom-button-orange');
             });
         }
     });

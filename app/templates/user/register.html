@@ -5,13 +5,38 @@
 {% block content %}
     <form class="dark-grey-form p-3 rounded" method="post" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        <input type="text" name="name" placeholder="ФИО" class="form-control mb-2" required>
-        <input type="text" name="login" placeholder="Логин" class="form-control mb-2" required>
-        <input type="password" name="password" placeholder="Пароль" class="form-control mb-2" required>
-        <input type="password" name="confirm_password" placeholder="Подтвердите пароль" class="form-control mb-2" required>
-        <input type="file" name="avatar" class="form-control mb-2" accept="image/*">
-        <input value="Зарегистрироваться" type="submit" class="btn btn-primary">
+
+        {{ form.name.label }}
+        {{ form.name(class="form-control mb-2") }}
+        {% if form.name.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.name.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {{ form.login.label }}
+        {{ form.login(class="form-control mb-2") }}
+        {% if form.login.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.login.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {{ form.password.label }}
+        {{ form.password(class="form-control mb-2") }}
+
+        {{ form.confirm_password.label }}
+        {{ form.confirm_password(class="form-control mb-2") }}
+
+        {{ form.avatar.label }}
+        {{ form.avatar(class="form-control mb-2", accept="image/*") }}
+
+        {{ form.submit(class="btn btn-primary") }}
     </form>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}
