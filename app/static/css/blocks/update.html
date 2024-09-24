@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/update_post.css') }}">
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Редактировать пост</h1>
+    <form method="POST" action="{{ url_for('post.update', post_id=post.id) }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title_post">Название темы</label>
+            <input type="text" class="form-control" id="title_post" name="title_post" value="{{ post.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="content_post">Основной текст</label>
+            <textarea class="form-control" id="content_post" name="content_post" rows="4" required>{{ post.content }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="snippet_post">Снипет</label>
+            <input type="text" class="form-control" id="snippet_post" name="snippet_post" value="{{ post.snippet }}" required>
+        </div>
+        <div class="form-group">
+            <label for="images">Обновить изображения (если нужно)</label>
+            <input type="file" class="form-control-file" id="images" name="images" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+    </form>
+</div>
+
+{% endblock %}

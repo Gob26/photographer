@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, redirect, flash
+from crypt import methods
+
+from flask import Blueprint
+from urllib3 import request
+from flask import flash, redirect, render_template, request, url_for
+from flask_login import login_user, logout_user
 from app.utils.functions import save_picture
-from ..forms import RegistrationForm  # Исправлено имя класса
+from ..forms import RegistrationForm, LoginForm # Исправлено имя класса
 from ..models.user import User
 from ..extensions import db, bcrypt
 
@@ -34,3 +39,24 @@ def register():
             db.session.rollback()  # Откат изменений при ошибке
             flash('Произошла ошибка при регистрации пользователя. Попробуйте еще раз.', 'danger')
     return render_template('user/register.html', form=form)
+
+
+@user.route('/user/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()  # Исправлено имя класса
+    if form.validate_on_submit():
+        user = User.query.filter_by(login=form.login.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')  # возвращаем пользователя на страницу которую он хотел
+            flash(f'Пользователь {form.login.data} успешно', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('post.all'))
+        else:
+            flash("Ошибка: Неверный логин или пароль", "danger")  # Уточнено сообщение об ошибке
+    return render_template('user/login.html', form=form)
+
+
+@user.route('/user/logout', methods=['POST', 'GET'])
+def logout():
+    logout_user()
+    return redirect(url_for('post.all'))

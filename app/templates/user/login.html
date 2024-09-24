@@ -3,14 +3,35 @@
 {% block title %}Авторизация{% endblock %}
 
 {% block content %}
-    <form method="post" class="form-control d-flex flex-column gap-2">
+    <form class="dark-grey-form p-3 rounded" method="post" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        {{ form.login(class="form-control", placeholder="Логин") }}
-        {{ form.password(class="form-control", placeholder="Пароль") }}
+
+        {{ form.login.label }}
+        {{ form.login(class="form-control mb-2", placeholder="Логин") }}
+        {% if form.login.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.login.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {{ form.password.label }}
+        {{ form.password(class="form-control mb-2", placeholder="Пароль") }}
+        {% if form.password.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <div class="d-flex flex-row justify-content-center gap-2">
             {{ form.remember.label }}{{ form.remember(class="form-check") }}
         </div>
-        {{ form.submit(class="btn btn-success") }}
+
+        {{ form.submit(class="btn btn-primary") }}  <!-- Изменено на btn-primary -->
     </form>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}

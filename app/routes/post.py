@@ -4,8 +4,8 @@ from crypt import methods
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
-
 from app.utils.functions import allowed_file
+from flask_login import login_required
 from ..extensions import db
 from ..models.post import Post
 
@@ -55,6 +55,7 @@ def post_detail(post_id):
 
 
 @post.route('/post/create', methods=['POST', 'GET'])
+@login_required
 def create():
     if request.method == 'POST':
         title_post = request.form.get('title_post')
@@ -83,6 +84,45 @@ def create():
 
 
 @post.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
-def update():
-    pass
+@login_required
+def update(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    if request.method == 'POST':
+        post.title = request.form.get('title_post')
+        post.content = request.form.get('content_post')
+        post.snippet = request.form.get('snippet_post')
+
+        # Обработка новых изображений
+        uploaded_files = request.files.getlist('images')
+        image_paths = save_uploaded_files(uploaded_files)
+
+        if image_paths:
+            post.images = image_paths  # Обновляем изображения только если есть новые
+
+        try:
+            db.session.commit()
+            logging.info(f"Post updated successfully: {post.title}")
+            return redirect(url_for('post.all'))#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        except Exception as e:
+            logging.error(f"Error updating post: {str(e)}")
+            return 'При обновлении поста произошла ошибка', 500
+
+    return render_template('post/update.html', post=post)
+
+
+@post.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    try:
+        db.session.delete(post)
+        db.session.commit()
+        logging.info(f"Post deleted successfully: {post.title}")
+        return redirect(url_for('post.all'))
+    except Exception as e:
+        logging.error(f"Error deleting post: {str(e)}")
+        return 'При удалении поста произошла ошибка', 500
+
 

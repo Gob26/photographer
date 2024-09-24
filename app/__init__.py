@@ -1,5 +1,6 @@
 from flask import Flask
-from app.extensions import db, migrate 
+from app.extensions import db, migrate, login_manager
+
 from .config import Config
 #импортируем роутеры
 from .routes.user import user
@@ -23,7 +24,11 @@ def create_app(config_class=Config):
 
     db.init_app(app)                    # Инициализация базы данных
     migrate.init_app(app, db)           # Инициализация миграции
+    login_manager.init_app(app)         # Инициализация авторизации
 
+    #LoGIN Manager  #Настройки логин менеджера
+    login_manager.login_view = 'user.login'
+    login_manager.login_message = 'Нужно авторизоваться для доступа к этой станице'
 
     with app.app_context():
         db.create_all()

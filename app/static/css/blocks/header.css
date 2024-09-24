@@ -1,0 +1,67 @@
+/* Настройка шапки */
+.header {
+    background-color: #1f1f20; /* Светло-серый цвет шапки */
+    padding: 0.07px; /* Уменьшение высоты в 1.7 раза */
+    margin: 20px; /* Увеличение отступов в 2 раза */
+    border-radius: 10px; /* Закругленные углы */
+}
+
+/* Логотип камеры */
+.camera-icon {
+    width: 20px; /* Уменьшение размеров в 1.7 раза */
+    height: 20px; /* Уменьшение размеров в 1.7 раза */
+    margin-right: 11px;
+    position: relative;
+}
+
+/* Вспышка камеры в круге объектива */
+.camera-flash {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    width: 40%;
+    height: 40%;
+    background-color: #777777; /* Светло-серый цвет вспышки */
+    border-radius: 50%; /* Вспышка только в круге объектива */
+    opacity: 0;
+    transition: opacity 0.1s ease, background-color 0.3s ease;
+}
+
+/* Цвет вспышки и ссылок ночью */
+.night-mode .camera-flash {
+    background-color: orange; /* Оранжевый цвет с 18:00 до 6:00 */
+}
+
+/* Цвет ссылок ночью */
+.night-mode .nav-link:hover {
+    color: #FF9800 !important; /* Оранжевый цвет ссылок ночью */
+}
+
+/* Цвет ссылок днем */
+.nav-link:hover {
+    color: #1976D2 !important; /* Синий цвет ссылок днем */
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .header {
+        margin: 10px; /* Меньшие отступы для мобильных */
+        padding: 4px 0; /* Уменьшенная высота на мобильных */
+    }
+    .navbar-brand {
+        font-size: 20px;
+    }
+    .nav-link {
+        font-size: 14px;
+    }
+}
+
+/* Меню навигации (по умолчанию скрыто) */
+.navbar-collapse {
+    display: none;
+}
+
+/* Отображение меню при активном состоянии */
+.navbar-collapse.show {
+    display: block;
+}
