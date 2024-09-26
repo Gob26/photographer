@@ -30,5 +30,5 @@ def compress_image(image_path, output_path, quality=85): #сжимаем и пе
 
 
 def allowed_file(filename): # Проверка на допустимый формат
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

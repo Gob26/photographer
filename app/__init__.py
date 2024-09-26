@@ -7,7 +7,7 @@ from .routes.user import user
 from .routes.post import post
 from .routes.main import main
 from .routes.contacts import contacts
-from .routes.photosession import photosession_all
+from .routes.photosession import photoshoot_bp
 
 def create_app(config_class=Config):
 
@@ -19,7 +19,7 @@ def create_app(config_class=Config):
     app.register_blueprint(post)
     app.register_blueprint(main)
     app.register_blueprint(contacts)
-    app.register_blueprint(photosession_all)
+    app.register_blueprint(photoshoot_bp)
     
 
     db.init_app(app)                    # Инициализация базы данных
