@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ photoshoot.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ photoshoot.title }}</h2>
+<p><strong>Описание:</strong> {{ photoshoot.meta_description }}</p>
+<p>{{ photoshoot.content }}</p>
+
+<h3>Фотографии:</h3>
+<div class="row">
+    {% for photo in photoshoot.photos %}
+    <div class="col-md-4 mb-3">
+        <img src="{{ url_for('static', filename=photo.filename) }}" class="img-fluid" alt="Фото">
+    </div>
+    {% endfor %}
+</div>
+
+<a href="{{ url_for('photosession.list_photoshoots') }}" class="btn btn-secondary">Назад к списку фотосессий</a>
+{% endblock %}

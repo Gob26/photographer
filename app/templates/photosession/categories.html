@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Категории фотосессий{% endblock %}
+
+{% block content %}
+<h2>Категории фотосессий</h2>
+<ul class="list-group">
+    {% for category in categories %}
+    <li class="list-group-item">
+        <a href="{{ url_for('photosession.category_photoshoots', category_name=category.name) }}">{{ category.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('photosession.list_photoshoots') }}" class="btn btn-secondary mt-3">Назад к списку фотосессий</a>
+{% endblock %}

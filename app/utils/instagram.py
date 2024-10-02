@@ -1,33 +1,65 @@
-import httpx
-import asyncio
+import subprocess
+import time
+import os
+import signal
+from instaloader import Instaloader, Profile
 
-# Прокси данные
-proxy_ip = '94.131.54.128'
-proxy_port = 9885
-proxy_user = 'kYgFvq'
-proxy_password = 'svQ58N'
+# Укажите свой пароль
+password = '0062'
+instagram_username = 'gob2626'  # Укажите свой логин
+instagram_password = '03079Gramm1986'  # Укажите свой пароль
 
-# Заголовки для эмуляции мобильного устройства
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; SM-G975F Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36'
-}
-
-# Функция для тестирования подключения
-async def test_connection(client, url, timeout=60):
+def connect_vpn():
+    print("Попытка подключения к VPN...")
     try:
-        print(f'Тестирование подключения к {url}...')
-        response = await client.get(url, headers=headers, timeout=timeout)
-        print(f'Прокси работает для {url}, статус кода: {response.status_code}')
+        process = subprocess.Popen(['sudo', '-S', 'openvpn', '--config', 'Canada, Montreal ROUTERS.ovpn'],
+                                   stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        time.sleep(10)  # Дождитесь подключения
+        print("Подключение к VPN успешно!")
+        return process
     except Exception as e:
-        print(f'Ошибка при подключении к {url} через прокси: {e}')
+        print(f"Ошибка при подключении к VPN: {e}")
+        return None
 
-# Запуск тестирования для Instagram, Google и Facebook
-async def main():
-    urls = ['https://www.instagram.com', 'https://www.google.com', 'https://www.facebook.com']
-    async with httpx.AsyncClient(proxies=f'socks5://{proxy_user}:{proxy_password}@{proxy_ip}:{proxy_port}',
-                                 timeout=60) as client:
-        for url in urls:
-            await test_connection(client, url)
+def disconnect_vpn(process):
+    print("Отключение VPN...")
+    try:
+        if process:
+            os.kill(process.pid, signal.SIGTERM)  # Остановить процесс
+            print("VPN отключен.")
+        else:
+            print("Нет активного процесса VPN.")
+    except Exception as e:
+        print(f"Ошибка при отключении VPN: {e}")
+
+def get_latest_post(username):
+    L = Instaloader()
+
+    # Вход в Instagram
+    try:
+        L.login(instagram_username, instagram_password)
+        print("Успешный вход в Instagram!")
+    except Exception as e:
+        print(f"Ошибка при входе в Instagram: {e}")
+        return
+
+    try:
+        profile = Profile.from_username(L.context, username)
+        posts = list(profile.get_posts())
+        if posts:
+            latest_post = posts[0]
+            print(f"Последний пост {username}:")
+            print(f"Заголовок: {latest_post.caption}")
+            print(f"Дата: {latest_post.date}")
+            print(f"Ссылка: https://www.instagram.com/p/{latest_post.shortcode}/")
+        else:
+            print("Посты не найдены.")
+    except Exception as e:
+        print(f"Ошибка при получении поста: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    vpn_process = connect_vpn()
+    time.sleep(10)  # Ожидание для стабилизации подключения
+    get_latest_post('anna_svetlichnaya')  # Убедитесь, что имя пользователя правильное
+    time.sleep(1130)  # Ожидание перед отключением
+    disconnect_vpn(vpn_process)

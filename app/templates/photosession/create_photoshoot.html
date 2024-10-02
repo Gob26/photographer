@@ -1,5 +1,79 @@
 {% extends 'main/base.html' %}
 
-{% block content %}
+{% block title %}Создание фотосессии{% endblock %}
 
+{% block content %}
+<div class="container mt-5">
+    <h2>Создать новую фотосессию</h2>
+
+    <!-- Форма создания фотосессии -->
+    <form method="POST" action="{{ url_for('photosession.create_photoshoot') }}" enctype="multipart/form-data">
+        <!-- CSRF токен для защиты формы -->
+        {{ form.hidden_tag() }}
+
+        <!-- Заголовок -->
+        <div class="form-group">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            {% if form.title.errors %}
+                <div class="text-danger">{{ form.title.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Meta описание -->
+        <div class="form-group mt-3">
+            {{ form.meta_description.label(class="form-label") }}
+            {{ form.meta_description(class="form-control") }}
+            {% if form.meta_description.errors %}
+                <div class="text-danger">{{ form.meta_description.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Описание фотосессии -->
+        <div class="form-group mt-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows=5) }}
+            {% if form.content.errors %}
+                <div class="text-danger">{{ form.content.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Категория -->
+        <div class="form-group mt-3">
+            {{ form.category.label(class="form-label") }}
+            {{ form.category(class="form-control") }}
+            {% if form.category.errors %}
+                <div class="text-danger">{{ form.category.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Фотографии -->
+        <div class="form-group mt-3">
+            {{ form.photos.label(class="form-label") }}
+            {{ form.photos(class="form-control-file", multiple=True) }}  <!-- Добавлено multiple -->
+            {% if form.photos.errors %}
+                <div class="text-danger">{{ form.photos.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Кнопка отправки формы -->
+        <button type="submit" class="btn btn-primary mt-4">Создать фотосессию</button>
+    </form>
+
+    <!-- Сообщение об ошибке -->
+    {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+    {% endif %}
+
+    <!-- Ошибки формы -->
+    {% if form.errors %}
+        <div class="alert alert-danger mt-4">
+            <ul>
+            {% for field, errors in form.errors.items() %}
+                <li>{{ field }}: {{ errors[0] }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

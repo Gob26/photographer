@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/libs/bootstrap.min.css') }}">!-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>A²S</title>
     <style>
@@ -13,10 +12,9 @@
             padding: 0.07px; /* Уменьшение высоты в 1.7 раза */
             margin: 20px; /* Увеличение отступов в 2 раза */
             border-radius: 10px; /* Закругленные углы */
-
         }
 
-        /* Логотип камеры */
+         /* Логотип камеры */
         .camera-icon {
             width: 20px; /* Уменьшение размеров в 1.7 раза */
             height: 20px; /* Уменьшение размеров в 1.7 раза */
@@ -31,15 +29,15 @@
             left: 30%;
             width: 40%;
             height: 40%;
-            background-color: #777777; /* Светло-серый цвет вспышки */
+            background-color: white; /* Белый цвет вспышки */
             border-radius: 50%; /* Вспышка только в круге объектива */
             opacity: 0;
-            transition: opacity 0.1s ease, background-color 0.3s ease;
+            transition: opacity 0.1s ease;
         }
 
         /* Цвет вспышки и ссылок ночью */
         .night-mode .camera-flash {
-            background-color: orange; /* Оранжевый цвет с 18:00 до 6:00 */
+            background-color: white; /* Белый цвет вспышки */
         }
 
         /* Цвет ссылок ночью */
@@ -75,6 +73,53 @@
         .navbar-collapse.show {
             display: block;
         }
+
+        /* Стили для выпадающего меню */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #1f1f20;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease; /* Плавный переход цвета */
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 5px 20px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #333;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Цвет фона выпадающего меню ночью */
+        .night-mode .dropdown-menu {
+            background-color: #333; /* Цвет фона для ночного режима */
+        }
+
+        /* Цвет фона выпадающего меню днем */
+        .dropdown-menu {
+            background-color: #1f1f20; /* Цвет фона для дневного режима */
+        }
+
+        /* Цвет фона элементов выпадающего меню при наведении ночью */
+        .night-mode .dropdown-item:hover {
+            background-color: #FF9800; /* Оранжевый цвет ночью */
+        }
+
+        /* Цвет фона элементов выпадающего меню при наведении днем */
+        .dropdown-item:hover {
+            background-color: #1976D2; /* Синий цвет днем */
+        }
     </style>
 </head>
 <body>
@@ -90,7 +135,7 @@
                 </svg>
                 A²S
             </a>
-            <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -101,11 +146,26 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('post.all') }}">Блог</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="photosession_all">Фотосессии</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Обо мне</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="photosessionsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Фотосессии
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="photosessionsDropdown">
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Свадебная фотосессия') }}">Свадебная фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Семейная фотосессия') }}">Семейная фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Детская фотосессия') }}">Детская фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Мужская фотосессия') }}">Мужская фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Женская фотосессия') }}">Женская фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Фотосессия пары') }}">Фотосессия пары</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Портретная фотосессия') }}">Портретная фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Фотосессия в студии') }}">Фотосессия в студии</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Уличная фотосессия') }}">Уличная фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Репортажная фотосессия') }}">Репортажная фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Групповая фотосессия') }}">Групповая фотосессия</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Фотосессия на выписку') }}">Фотосессия на выписку</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Фотограф на венчание') }}">Фотограф на венчание</a>
+                            <a class="dropdown-item" href="{{ url_for('photosession.category_photoshoots', category_name='Фотограф на крещение') }}">Фотограф на крещение</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('contacts.contacts_page')}}">Контакты</a>
@@ -116,48 +176,47 @@
     </nav>
 </header>
 
-<script src="{{ url_for('static', filename='js/libs/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 <script>
-    // Обновление режима шапки (день/ночь)
-    function updateHeaderMode() {
-        const now = new Date();
-        const moscowTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
-        const hours = moscowTime.getHours();
-        const isNightTime = hours >= 18 || hours < 6; // Ночь с 18:00 до 6:00
-        document.querySelector('.header').classList.toggle('night-mode', isNightTime); // Переключение режимов
+    // Функция для получения текущего времени
+    function getCurrentTime() {
+        const date = new Date();
+        return date.getHours();
+    }
 
-        // Изменение цвета ссылок
-        const flash = document.querySelector('.camera-flash');
-        if (isNightTime) {
-            flash.style.backgroundColor = 'orange'; // Оранжевый ночью
+    // Установка ночного режима
+    function setNightMode() {
+        const hour = getCurrentTime();
+        const body = document.body;
+
+        if (hour >= 18 || hour < 6) {
+            body.classList.add('night-mode');
         } else {
-            flash.style.backgroundColor = '#1976D2'; // Синий днем
+            body.classList.remove('night-mode');
         }
     }
 
-    // Вспышка камеры
+    // Функция для мигания вспышки
     function flashCamera() {
         const flash = document.querySelector('.camera-flash');
-        flash.style.opacity = '1';
-        setTimeout(() => {
-            flash.style.opacity = '0';
-        }, 100);
+        setInterval(() => {
+            flash.style.opacity = '1';
+            setTimeout(() => {
+                flash.style.opacity = '0';
+            }, 100);
+        }, 1000);
     }
 
-    // Открытие и закрытие мобильного меню
-    const toggler = document.querySelector('.navbar-toggler');
-    const menu = document.querySelector('.navbar-collapse');
-
-    toggler.addEventListener('click', function() {
-        menu.classList.toggle('show'); // Переключение видимости меню
+    // Вызов функций при загрузке страницы
+    document.addEventListener("DOMContentLoaded", function() {
+        setNightMode();
+        flashCamera();
     });
-
-    // Инициализация переключения режимов
-    updateHeaderMode();
-    setInterval(updateHeaderMode, 60000); // Обновление каждые 60 секунд
-    setInterval(flashCamera, 3000); // Вспышка каждые 3 секунды
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 </body>
 </html>

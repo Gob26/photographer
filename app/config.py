@@ -18,3 +18,6 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}'
     SECRET_KEY = 'ferf5453rfrgwrs34t46245rf2454tfwrge'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+    # Токен для Telegram-бота
+    TELEGRAM_BOT_TOKEN = os.environ.get('7484238687:AAFywOTF8ZkhVIcXFwAtGG6IhlrqQBxGhrU')

@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Список фотосессий{% endblock %}
+
+{% block content %}
+<h2>Список фотосессий</h2>
+<ul class="list-group">
+    {% for photoshoot in photoshoots %}
+    <li class="list-group-item">
+        <a href="{{ url_for('photosession.view_photoshoot', id=photoshoot.id) }}">{{ photoshoot.title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('photosession.create_photoshoot') }}" class="btn btn-primary mt-3">Создать новую фотосессию</a>
+{% endblock %}
