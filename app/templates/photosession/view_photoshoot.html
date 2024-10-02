@@ -3,18 +3,57 @@
 {% block title %}{{ photoshoot.title }}{% endblock %}
 
 {% block content %}
-<h2>{{ photoshoot.title }}</h2>
-<p><strong>Описание:</strong> {{ photoshoot.meta_description }}</p>
-<p>{{ photoshoot.content }}</p>
+<div class="photoshoot-container">
+  <h2 class="photoshoot-title">{{ photoshoot.title }}</h2>
+  <p class="photoshoot-meta">{{ photoshoot.meta_description }}</p>
 
-<h3>Фотографии:</h3>
-<div class="row">
-    {% for photo in photoshoot.photos %}
-    <div class="col-md-4 mb-3">
-        <img src="{{ url_for('static', filename=photo.filename) }}" class="img-fluid" alt="Фото">
+  <!-- Галерея с фотографиями -->
+  <div class="photoshoot-gallery">
+    <div class="row">
+      {% for photo in photoshoot.photos %}
+      <div class="col-md-6 mb-4">
+        <a href="{{ url_for('static', filename='upload/' + photoshoot.category.name ~ '/' ~ photo.filename) }}" data-lightbox="photos">
+          <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name ~ '/' ~ photo.filename) }}" class="img-fluid photo-image" alt="Фото">
+        </a>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
+  </div>
+
+  <!-- Основной текст фотосессии -->
+  <div class="photoshoot-content">
+    <h3>Описание Фотосессии</h3>
+    <p>{{ photoshoot.content }}</p>
+  </div>
+
+  <!-- Кнопка возврата к списку фотосессий -->
+  <a href="{{ url_for('photosession.list_photoshoots') }}" class="btn-back">Назад к списку фотосессий</a>
 </div>
 
-<a href="{{ url_for('photosession.list_photoshoots') }}" class="btn btn-secondary">Назад к списку фотосессий</a>
+<!-- Lightbox CSS для увеличения фотографий -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+<!-- Стили галереи Swiper -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Lightbox JS для работы с увеличением изображений -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<!-- Swiper JS для навигации по галерее -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script>
+  // Скрипт Swiper для плавного листания фотографий
+  var swiper = new Swiper('.swiper-container', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    direction: 'vertical',  // Вертикальная прокрутка
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    loop: true,
+  });
+</script>
 {% endblock %}

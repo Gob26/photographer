@@ -1,16 +1,49 @@
+
 {% extends 'main/base.html' %}
 
-{% block title %}Список фотосессий{% endblock %}
-
 {% block content %}
-<h2>Список фотосессий</h2>
-<ul class="list-group">
-    {% for photoshoot in photoshoots %}
-    <li class="list-group-item">
-        <a href="{{ url_for('photosession.view_photoshoot', id=photoshoot.id) }}">{{ photoshoot.title }}</a>
-    </li>
-    {% endfor %}
-</ul>
+    <h1>Все фотосессии</h1>
+    
+    {# Отображение категорий #}
+    <div class="categories">
+        {% for category_name, category in categories.items() %}
+            <a href="{{ url_for('photosession.category_photoshoots', category_name=category_name) }}">
+                {{ category.value }}
+            </a>
+        {% endfor %}
+    </div>
 
-<a href="{{ url_for('photosession.create_photoshoot') }}" class="btn btn-primary mt-3">Создать новую фотосессию</a>
+    {# Отображение фотосессий #}
+    {% for photoshoot in photoshoots.items %}
+        <div class="photoshoot">
+            <h2>{{ photoshoot.title }}</h2>
+            <p>Категория: {{ photoshoot.category.value }}</p>
+            <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
+                Подробнее
+            </a>
+        </div>
+    {% endfor %}
+
+    {# Пагинация #}
+    <div class="pagination">
+        {% if photoshoots.has_prev %}
+            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.prev_num) }}">Предыдущая</a>
+        {% endif %}
+
+        {% for page in photoshoots.iter_pages() %}
+            {% if page %}
+                {% if page != photoshoots.page %}
+                    <a href="{{ url_for('photosession.list_photoshoots', page=page) }}">{{ page }}</a>
+                {% else %}
+                    <strong>{{ page }}</strong>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+
+        {% if photoshoots.has_next %}
+            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.next_num) }}">Следующая</a>
+        {% endif %}
+    </div>
 {% endblock %}

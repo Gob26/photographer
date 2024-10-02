@@ -7,7 +7,7 @@
     <h2>Создать новую фотосессию</h2>
 
     <!-- Форма создания фотосессии -->
-    <form method="POST" action="{{ url_for('photosession.create_photoshoot') }}" enctype="multipart/form-data">
+    <form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('photosession.create_photoshoot') }}" enctype="multipart/form-data">
         <!-- CSRF токен для защиты формы -->
         {{ form.hidden_tag() }}
 
@@ -50,7 +50,7 @@
         <!-- Фотографии -->
         <div class="form-group mt-3">
             {{ form.photos.label(class="form-label") }}
-            {{ form.photos(class="form-control-file", multiple=True) }}  <!-- Добавлено multiple -->
+            {{ form.photos(class="form-control-file") }}
             {% if form.photos.errors %}
                 <div class="text-danger">{{ form.photos.errors[0] }}</div>
             {% endif %}
@@ -64,16 +64,7 @@
     {% if error %}
         <div class="alert alert-danger mt-4">{{ error }}</div>
     {% endif %}
-
-    <!-- Ошибки формы -->
-    {% if form.errors %}
-        <div class="alert alert-danger mt-4">
-            <ul>
-            {% for field, errors in form.errors.items() %}
-                <li>{{ field }}: {{ errors[0] }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
 </div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+
 {% endblock %}

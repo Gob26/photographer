@@ -1,16 +1,16 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Фотосессии в категории: {{ category }}{% endblock %}
+{% block title %}{{ category }} Фотосессии{% endblock %}
 
 {% block content %}
-<h2>Фотосессии в категории: {{ category }}</h2>
-<ul class="list-group">
-    {% for photoshoot in photoshoots %}
-    <li class="list-group-item">
-        <a href="{{ url_for('photosession.view_photoshoot', id=photoshoot.id) }}">{{ photoshoot.title }}</a>
+<h1>"{{ category }}"</h1>
+<ul>
+  {% for photoshoot in photoshoots %}
+    <li>
+      <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
+        {{ photoshoot.title }}
+      </a>
     </li>
-    {% endfor %}
+  {% endfor %}
 </ul>
-
-<a href="{{ url_for('photosession.list_photoshoots') }}" class="btn btn-secondary mt-3">Назад к списку фотосессий</a>
 {% endblock %}

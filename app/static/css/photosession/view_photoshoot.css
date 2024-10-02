@@ -1,0 +1,66 @@
+.photoshoot-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.photoshoot-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.photoshoot-meta {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  color: #555;
+  font-style: italic;
+}
+
+.photo-image {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.photo-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Галерея с двумя фотографиями в строке */
+.photoshoot-gallery {
+  margin-bottom: 40px;
+}
+
+/* Основной текст фотосессии */
+.photoshoot-content {
+  text-align: left;
+  font-size: 1.2rem;
+  color: #333;
+  line-height: 1.8;
+  margin-top: 20px;
+}
+
+.btn-back {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 30px;
+  color: #fff;
+  background-color: #333;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.btn-back:hover {
+  background-color: #555;
+}
+
+/* Lightbox стили для увеличения фото */
+.lightbox {
+  max-width: 100%;
+}
