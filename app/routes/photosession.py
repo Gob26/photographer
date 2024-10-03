@@ -7,6 +7,7 @@ from app.utils.functions import allowed_file
 from app.models.photosession import Photo, Category, Photosession
 from ..extensions import db
 
+
 photoshoot_bp = Blueprint('photosession', __name__)
 
 @photoshoot_bp.route('/photoshoot/create', methods=['GET', 'POST'])
@@ -104,7 +105,7 @@ def category_photoshoots(category_name):
     except KeyError:
         flash('Категория не найдена', 'danger')
         return redirect(url_for('photosession.list_photoshoots'))
-
+    # отображение все фотосессии в категории
     page = request.args.get('page', 1, type=int)
     photoshoots = Photosession.query.filter_by(category=category).order_by(Photosession.created_at.desc()).paginate(page=page, per_page=10)
     return render_template('photosession/category_photoshoots.html', photoshoots=photoshoots, category=category.value, category_name=category_name)

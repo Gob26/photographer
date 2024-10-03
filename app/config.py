@@ -20,4 +20,4 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # Токен для Telegram-бота
-    TELEGRAM_BOT_TOKEN = os.environ.get('7484238687:AAFywOTF8ZkhVIcXFwAtGG6IhlrqQBxGhrU')
+    TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')

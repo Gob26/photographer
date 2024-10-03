@@ -1,0 +1,68 @@
+.photo-container {
+    position: relative;
+    width: 100%;
+    background-color: #333333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.slider {
+    width: 100%;
+    height: 400px; /* Фиксированная высота для слайдера */
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover; /* Заполнение контейнера */
+    transition: filter 0.3s ease;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.slide:hover {
+    filter: grayscale(0%);
+}
+
+.photo-description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+}
+
+.photo-description h5 {
+    margin: 0;
+    color: #ffffff;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.btn-action {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+.btn-action:hover {
+    color: #1976D2;
+}
