@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Обновить фотосессию</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.meta_description.label }}
+            {{ form.meta_description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.content.label }}
+            {{ form.content(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.category.label }}
+            {{ form.category(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.photos.label }}
+            {{ form.photos(class="form-control-file") }}
+        </div>
+
+        {% if photosession.photos %}
+        <h3>Текущие фотографии</h3>
+        <div class="row">
+            {% for photo in photosession.photos %}
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='uploads/' + photosession.category.name + '/' + photo.filename) }}" class="img-thumbnail" alt="{{ photo.filename }}">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="delete_photos" value="{{ photo.id }}" id="delete_photo_{{ photo.id }}">
+                    <label class="form-check-label" for="delete_photo_{{ photo.id }}">
+                        Удалить эту фотографию
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Обновить фотосессию</button>
+    </form>
+</div>
+
+{% endblock %}

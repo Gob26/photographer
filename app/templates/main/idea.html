@@ -1,0 +1,112 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Идеи для фотосессии{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-light mb-4">GPT</h1>
+    <form class="dark-grey-form p-3 rounded mb-4" method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group mb-3">
+            {{ form.category.label(class='form-label text-light') }}
+            {{ form.category(class='form-select') }}
+        </div>
+
+        <div class="form-group mb-3 d-none" id="custom-category-group">
+            {{ form.custom_category.label(class='form-label text-light') }}
+            {{ form.custom_category(class='form-control') }}
+        </div>
+
+        <div class="form-group mb-3">
+            {{ form.style.label(class='form-label text-light') }}
+            {{ form.style(class='form-select') }}
+        </div>
+
+        <div class="form-group mb-3 d-none" id="custom-style-group">
+            {{ form.custom_style.label(class='form-label text-light') }}
+            {{ form.custom_style(class='form-control') }}
+        </div>
+
+        <div class="form-group mb-3">
+            {{ form.place.label(class='form-label text-light') }}
+            {{ form.place(class='form-select') }}
+        </div>
+
+        <div class="form-group mb-3 d-none" id="custom-place-group">
+            {{ form.custom_place.label(class='form-label text-light') }}
+            {{ form.custom_place(class='form-control') }}
+        </div>
+
+        <div class="form-group mb-3">
+            {{ form.free_text.label(class='form-label text-light') }}
+            {{ form.free_text(class='form-control', rows='3') }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    </form>
+
+    {% if gpt_response %}
+        <div class="gpt-response-container">
+            <h2 class="text-light mb-3">Ответ GPT:</h2>
+            <div class="gpt-response-box p-3 rounded" id="gpt-response">
+                {{ gpt_response }}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/gpt.css') }}">
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function toggleCustomField(selectId, customGroupId) {
+        const select = document.getElementById(selectId);
+        const customGroup = document.getElementById(customGroupId);
+
+        select.addEventListener('change', function() {
+            if (this.value === 'other') {
+                customGroup.classList.remove('d-none');
+            } else {
+                customGroup.classList.add('d-none');
+            }
+        });
+    }
+
+    toggleCustomField('{{ form.category.id }}', 'custom-category-group');
+    toggleCustomField('{{ form.style.id }}', 'custom-style-group');
+    toggleCustomField('{{ form.place.id }}', 'custom-place-group');
+
+    // Форматирование ответа GPT
+    function formatGPTResponse() {
+        const responseElement = document.getElementById('gpt-response');
+        if (responseElement) {
+            let content = responseElement.innerHTML;
+
+            // Заменяем двойные переносы строк на закрывающие и открывающие теги параграфов
+            content = content.replace(/\n\n/g, '</p><p>');
+
+            // Оборачиваем весь контент в теги параграфа
+            content = '<p>' + content + '</p>';
+
+            // Заменяем одиночные переносы строк на <br>
+            content = content.replace(/\n/g, '<br>');
+
+            // Форматируем списки
+            content = content.replace(/(\d+\.\s)/g, '<br>$1');
+            content = content.replace(/(\*\s)/g, '<br>• ');
+
+            // Добавляем заголовки
+            content = content.replace(/([A-ZА-Я][^.!?:]+:)/g, '<h3>$1</h3>');
+
+            responseElement.innerHTML = content;
+        }
+    }
+
+    formatGPTResponse();
+});
+</script>
+{% endblock %}

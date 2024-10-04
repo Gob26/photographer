@@ -1,5 +1,8 @@
 import os
+from crypt import methods
+import logging
 from flask import Blueprint, render_template, request, redirect, url_for, current_app, flash
+from sqlalchemy.testing.plugin.plugin_base import logging
 from werkzeug.utils import secure_filename
 from flask_login import login_required
 from ..forms import CreatePhotosessionForm
@@ -75,6 +78,89 @@ def create_photoshoot():
     return render_template('photosession/create_photoshoot.html', form=form, categories=Category)
 
 
+@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>/delete', methods=['POST'])
+@login_required
+def delete(category_name, id):
+    photosession = Photosession.query.get_or_404(id)
+
+    try:
+        # Delete associated photos
+        for photo in photosession.photos:
+            # Delete photo file
+            photo_path = os.path.join(current_app.config['SERVER_PATH'], category_name, photo.filename)
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+
+            # Delete photo record from database
+            db.session.delete(photo)
+
+        # Delete photosession
+        db.session.delete(photosession)
+        db.session.commit()
+
+        current_app.logger.info(f"Photosession deleted: {photosession}")
+        flash('Фотосессия успешно удалена', 'success')
+        return redirect(url_for('photosession.list_photoshoots'))
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting photosession: {str(e)}")
+        flash('При удалении фотосессии произошла ошибка', 'danger')
+        return redirect(url_for('photosession.view_photoshoot', category_name=category_name, id=id))
+
+
+@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>/update', methods=['GET', 'POST'])
+@login_required
+def update(category_name, id):  # Changed function name from update_photoshoot to update
+    photosession = Photosession.query.get_or_404(id)
+    form = CreatePhotosessionForm(obj=photosession)
+
+    if form.validate_on_submit():
+        try:
+            # Update photosession details
+            photosession.title = form.title.data
+            photosession.meta_description = form.meta_description.data
+            photosession.content = form.content.data
+            photosession.category = Category[form.category.data]
+
+            # Handle photo uploads
+            upload_folder = current_app.config['SERVER_PATH']
+            new_category_folder = os.path.join(upload_folder, form.category.data)
+
+            if not os.path.exists(new_category_folder):
+                os.makedirs(new_category_folder)
+
+            photos = request.files.getlist('photos')
+            for photo in photos:
+                if photo and allowed_file(photo.filename):
+                    filename = secure_filename(photo.filename)
+                    photo_path = os.path.join(new_category_folder, filename)
+                    photo.save(photo_path)
+
+                    new_photo = Photo(filename=filename, photosession_id=photosession.id)
+                    db.session.add(new_photo)
+
+            # Handle photo deletions
+            photos_to_delete = request.form.getlist('delete_photos')
+            for photo_id in photos_to_delete:
+                photo = Photo.query.get(photo_id)
+                if photo:
+                    os.remove(os.path.join(upload_folder, category_name, photo.filename))
+                    db.session.delete(photo)
+
+            db.session.commit()
+            current_app.logger.info(f"Photosession updated: {photosession}")
+            flash('Фотосессия успешно обновлена', 'success')
+            return redirect(url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id))
+
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating photosession: {str(e)}")
+            flash('При обновлении фотосессии произошла ошибка', 'danger')
+
+    # If GET request or form validation fails, render the update form
+    return render_template('photosession/update_photoshoot.html', form=form, photosession=photosession)
+
+#пока конеретной фотосессии
 @photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>', methods=['GET'])
 def view_photoshoot(category_name, id):
     # Проверяем, что категория существует в enum

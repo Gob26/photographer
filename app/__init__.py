@@ -8,7 +8,7 @@ from .routes.post import post
 from .routes.main import main
 from .routes.contacts import contacts
 from .routes.photosession import photoshoot_bp
-
+from .routes.gpt_idea import gpt
 def create_app(config_class=Config):
 
     app = Flask(__name__)
@@ -20,7 +20,7 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(contacts)
     app.register_blueprint(photoshoot_bp)
-    
+    app.register_blueprint(gpt)
 
     db.init_app(app)                    # Инициализация базы данных
     migrate.init_app(app, db)           # Инициализация миграции

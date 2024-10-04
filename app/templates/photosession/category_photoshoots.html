@@ -22,10 +22,10 @@
           <h5>{{ photoshoot.title }}</h5>
           <div class="action-buttons">
             {% if current_user.is_authenticated %}
-              <a href="#" class="btn-action btn-edit" title="Редактировать">
+              <a href="{{ url_for('photosession.update', category_name=photoshoot.category.name, id=photoshoot.id) }}" class="btn-action btn-edit" title="Редактировать">
                 <i class="fas fa-pencil-alt"></i>
               </a>
-              <form method="POST" action="#" style="display:inline;">
+              <form method="POST" action="{{ url_for('photosession.delete', category_name=photoshoot.category.name, id=photoshoot.id) }}" style="display:inline;">
                 <button type="submit" class="btn-action btn-delete" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить эту фотосессию?');">
                   <i class="fas fa-trash-alt"></i>
                 </button>
