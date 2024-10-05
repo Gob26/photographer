@@ -3,6 +3,27 @@ import secrets
 from flask import current_app
 import os
 
+import random
+from datetime import datetime, date
+
+from app.models.photosession import Photosession
+
+
+def get_photosessions_from_db():
+    return Photosession.query.all()  # Получаем все фотосессии из базы данных
+
+
+def get_random_photosessions(count=6):
+    photosessions = get_photosessions_from_db()  # Получаем фотосессии из БД
+    if not photosessions:  # Проверяем, есть ли фотосессии
+        return []
+
+    today = date.today()
+    today_datetime = datetime.combine(today, datetime.min.time())
+    random.seed(int(today_datetime.timestamp()))
+
+    return random.sample(photosessions, min(len(photosessions), count))
+
 
 def save_picture(picture):   #Сохраняем уменьшенное изображение и передаем кго новое имя
     random_hex = secrets.token_hex(8)

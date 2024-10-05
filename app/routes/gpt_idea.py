@@ -1,11 +1,8 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 from ..forms import GPTForm
-import requests
+from app.utils.gpt_service import get_gpt_response  # Импортируем функцию из gpt_service
 
 gpt = Blueprint('gpt', __name__)
-
-API_KEY = 'sk-nZ1fNktvkOPFqAiK44F4E1AcA0Ac45CfA21c989c6fEbE262'
-URL = 'https://neuroapi.host/v1/chat/completions'
 
 @gpt.route('/idea', methods=['POST', 'GET'])
 def gpt_page():
@@ -13,12 +10,14 @@ def gpt_page():
     form = GPTForm()   # Создание экземпляра формы
 
     if form.validate_on_submit():  # Проверяем, была ли форма отправлена и валидна ли она
+        flash("Ответ получен, листайте вниз)", 'info') #флеш о получении ответа
         free_text = form.free_text.data
         category = form.category.data
         style = form.style.data
         place = form.place.data
 
         if request.method == 'POST':
+            # Формируем пользовательское сообщение для GPT
             user_message = f"Представь, что ты фотограф мирового уровня, работающий в Ставрополе. " \
                           f"Пожалуйста, предложи оригинальную идею для  '{category}' в стиле '{style}'. " \
                           f"Место съемки — '{place}'. Также учти дополнительную информацию: '{free_text}'. " \
@@ -27,25 +26,7 @@ def gpt_page():
 
             print(f'Пользовательское сообщение: {user_message}')  # Логируем сообщение пользователя
 
-            headers = {
-                'Authorization': f'Bearer {API_KEY}',
-                'Content-Type': 'application/json',
-            }
-
-            data = {
-                'model': 'gpt-3.5-turbo',
-                'messages': [{'role': 'user', 'content': user_message}],
-            }
-
-            response = requests.post(URL, headers=headers, json=data)
-            print(f'Статус ответа: {response.status_code}')  # Логируем статус ответа
-
-            if response.status_code == 200:
-                response_data = response.json()
-                print(f'Ответ от API: {response_data}')  # Логируем полный ответ от API
-                response_message = response_data['choices'][0]['message']['content']
-            else:
-                response_message = f'Ошибка: {response.status_code} - {response.text}'
-                print(response_message)  # Логируем ошибку
+            # Получаем ответ от GPT через нашу функцию
+            response_message = get_gpt_response(user_message)
 
     return render_template('main/idea.html', form=form, gpt_response=response_message)

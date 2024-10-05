@@ -1,4 +1,3 @@
-
 {% extends 'main/base.html' %}
 
 {% block content %}
@@ -18,6 +17,16 @@
         <div class="photoshoot">
             <h2>{{ photoshoot.title }}</h2>
             <p>Категория: {{ photoshoot.category.value }}</p>
+
+            {# Отображение первого фото #}
+            {% if photoshoot.photos|length > 0 %}
+                <div class="photo-gallery">
+                    <img src="{{ url_for('static', filename='upload/' ~ photoshoot.category.name ~ '/' ~ photoshoot.photos[0].filename) }}" alt="{{ photoshoot.title }}" class="photoshoot-image" loading="lazy">
+                </div>
+            {% else %}
+                <p>Нет доступных фотографий</p>
+            {% endif %}
+
             <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
                 Подробнее
             </a>
@@ -46,4 +55,20 @@
             <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.next_num) }}">Следующая</a>
         {% endif %}
     </div>
+<style>
+    .photo-gallery {
+    width: 150px; /* Фиксированная ширина контейнера */
+    height: 100px; /* Фиксированная высота контейнера */
+    overflow: hidden; /* Скрытие переполняющего содержимого */
+    margin-bottom: 10px; /* Отступ снизу для разделения изображений */
+    border: 1px solid #ccc; /* Параметры границы */
+    border-radius: 4px; /* Закругление углов */
+}
+
+.photoshoot-image {
+    width: 100%; /* Ширина изображения 100% от родительского контейнера */
+    height: 100%; /* Высота изображения 100% от родительского контейнера */
+    object-fit: cover; /* Сохранение пропорций изображения с обрезкой */
+}
+
 {% endblock %}

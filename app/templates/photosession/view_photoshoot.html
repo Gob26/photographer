@@ -13,7 +13,7 @@
       {% for photo in photoshoot.photos %}
       <div class="col-md-6 mb-4">
         <a href="{{ url_for('static', filename='upload/' + photoshoot.category.name ~ '/' ~ photo.filename) }}" data-lightbox="photos">
-          <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name ~ '/' ~ photo.filename) }}" class="img-fluid photo-image" alt="Фото">
+          <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name ~ '/' ~ photo.filename) }}" class="img-fluid photo-image" alt="Фото" loading="lazy">
         </a>
       </div>
       {% endfor %}

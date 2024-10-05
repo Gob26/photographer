@@ -1,5 +1,5 @@
 from flask import Flask
-from app.extensions import db, migrate, login_manager
+from app.extensions import db, migrate, login_manager, cache
 
 from .config import Config
 #импортируем роутеры
@@ -21,7 +21,8 @@ def create_app(config_class=Config):
     app.register_blueprint(contacts)
     app.register_blueprint(photoshoot_bp)
     app.register_blueprint(gpt)
-
+    # Инициализация кэша
+    cache.init_app(app)  # Инициализация кэша
     db.init_app(app)                    # Инициализация базы данных
     migrate.init_app(app, db)           # Инициализация миграции
     login_manager.init_app(app)         # Инициализация авторизации

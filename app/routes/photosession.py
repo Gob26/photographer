@@ -13,6 +13,8 @@ from ..extensions import db
 
 photoshoot_bp = Blueprint('photosession', __name__)
 
+
+
 @photoshoot_bp.route('/photoshoot/create', methods=['GET', 'POST'])
 @login_required
 def create_photoshoot():
@@ -86,7 +88,7 @@ def delete(category_name, id):
     try:
         # Delete associated photos
         for photo in photosession.photos:
-            # Delete photo file
+            # удаляем фото
             photo_path = os.path.join(current_app.config['SERVER_PATH'], category_name, photo.filename)
             if os.path.exists(photo_path):
                 os.remove(photo_path)

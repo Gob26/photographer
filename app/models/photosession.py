@@ -1,3 +1,6 @@
+from pygments.lexer import default
+from sqlalchemy import Boolean
+
 from app import db
 from datetime import datetime
 import enum
@@ -28,7 +31,7 @@ class Photosession(db.Model):
     category = db.Column(db.Enum(Category), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     photos = db.relationship('Photo', backref='photosession', lazy=True)
-
+    show_on_main = db.Column(Boolean, default=False)
 
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

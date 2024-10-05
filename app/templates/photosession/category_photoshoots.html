@@ -13,7 +13,7 @@
           <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
             <div class="slides">
               {% for photo in photoshoot.photos %}
-                <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name + '/' + photo.filename) }}" class="d-block w-100 slide grayscale" alt="{{ photoshoot.title }}">
+                <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name + '/' + photo.filename) }}" class="d-block w-100 slide grayscale" alt="{{ photoshoot.title }}" loading="lazy">
               {% endfor %}
             </div>
           </a>

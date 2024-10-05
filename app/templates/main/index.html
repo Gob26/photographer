@@ -3,8 +3,10 @@
 {% block title %}Фотограф | Анна Светличная{% endblock %}
 
 {% block content %}
-<div class="photographer-page">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/photosession/category_photoshoots.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+<div class="photographer-page">
     <div class="photographer-description">
         <p>
             Привет! Меня зовут Анна Светличная, и я профессиональный фотограф с опытом работы более 7 лет.
@@ -12,16 +14,68 @@
             Каждая фотосессия для меня — это не просто работа, а уникальная история, которая заслуживает
             индивидуального подхода и тщательной подготовки.
         </p>
-        <p>
-            Моя основная цель — запечатлеть моменты, которые останутся с вами навсегда. Я работаю с современной аппаратурой,
-            что позволяет создавать изображения высочайшего качества, будь то свадебные фотографии, портретные съёмки,
-            семейные фотосессии или рекламные проекты.
-        </p>
-        <p>
-            Если вам нужна фотосессия, которая будет соответствовать вашим ожиданиям и подчеркнёт важные моменты вашей жизни,
-            буду рада стать вашим фотографом. Вместе мы создадим нечто удивительное!
-        </p>
+
     </div>
 
+    <div class="row">
+        {% for photoshoot in random_photosessions %}
+        <div class="col-md-4 mb-4">
+            <div class="photo-container">
+                <div class="slider" id="slider-{{ photoshoot.id }}">
+                    <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
+                        <div class="slides">
+                            {% for photo in photoshoot.photos %}
+                            <img src="{{ url_for('static', filename='upload/' ~ photoshoot.category.name ~ '/' ~ photo.filename) }}" class="d-block w-100 slide grayscale" alt="{{ photoshoot.title }}" loading="lazy">
+                            {% endfor %}
+                        </div>
+                    </a>
+                </div>
+                <div class="photo-description">
+                    <h5>{{ photoshoot.title }}</h5>
+                    <div class="action-buttons">
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('photosession.update', category_name=photoshoot.category.name, id=photoshoot.id) }}" class="btn-action btn-edit" title="Редактировать">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('photosession.delete', category_name=photoshoot.category.name, id=photoshoot.id) }}" style="display:inline;">
+                            <button type="submit" class="btn-action btn-delete" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить эту фотосессию?');">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sliders = document.querySelectorAll('.slider');
+
+            sliders.forEach(slider => {
+                let index = 0;
+                const slides = slider.querySelector('.slides');
+                const slideImages = slides.querySelectorAll('.slide');
+
+                function showSlide(i) {
+                    if (i >= slideImages.length) {
+                        index = 0;
+                    } else if (i < 0) {
+                        index = slideImages.length - 1;
+                    } else {
+                        index = i;
+                    }
+                    const offset = -index * 100;
+                    slides.style.transform = `translateX(${offset}%)`;
+                }
+
+                setInterval(() => {
+                    showSlide(index + 1);
+                }, 3000);
+            });
+        });
+    </script>
 </div>
 {% endblock %}
