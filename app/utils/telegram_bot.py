@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from sqlalchemy.exc import IntegrityError
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from flask import current_app
 from app.models.user import User
@@ -32,11 +32,34 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Функции-обработчики команд
 
+# Создаем постоянную клавиатуру с кнопкой "Меню"
+menu_keyboard = ReplyKeyboardMarkup([[KeyboardButton("Меню")]], resize_keyboard=True)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Обработчик команды /start. Отправляет приветственное сообщение и показывает главное меню.
+    Обработчик команды /start. Отправляет приветственное сообщение и показывает постоянную кнопку "Меню".
     """
-    await update.message.reply_text("Привет! Выберите действие:", reply_markup=menu)
+    await update.message.reply_text("Привет! Нажмите кнопку 'Меню' для доступа к функциям.", reply_markup=menu_keyboard)
+
+async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Обработчик нажатия кнопки "Меню". Показывает inline-клавиатуру с основными действиями.
+    """
+    await update.message.reply_text("Выберите действие:", reply_markup=menu)
+
+async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Обработчик нажатий на кнопки inline-клавиатуры.
+    """
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "login":
+        await query.message.reply_text("Вы выбрали вход в систему.")
+    elif query.data == "add_article":
+        await query.message.reply_text("Вы выбрали добавление статьи.")
+    elif query.data == "add_photosession":
+        await query.message.reply_text("Вы выбрали добавление фотосессии.")
 
 async def process_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
@@ -351,7 +374,7 @@ async def finalize_photosession(update: Update, context: ContextTypes.DEFAULT_TY
             show_on_main=False
         )
         db.session.add(new_photoshoot)
-        db.session.flush()  # Чтобы получить id новой фотосессии
+        db.session.flush()  # Чтобы получить id новой фотосессии!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         for filename in photo_filenames:
             photo = Photo(filename=filename, photosession_id=new_photoshoot.id)
@@ -377,6 +400,7 @@ def main() -> None:
     application = ApplicationBuilder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.Regex("^Меню$"), show_menu))
     application.add_handler(CallbackQueryHandler(process_login, pattern='login'))
     application.add_handler(CallbackQueryHandler(process_add_article, pattern='add_article'))
     application.add_handler(CallbackQueryHandler(process_add_photosession, pattern='add_photosession'))
