@@ -1,12 +1,15 @@
 import os
+from datetime import datetime
+
+from sqlalchemy.exc import IntegrityError
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from flask import current_app
 from app.models.user import User
 from app.models.post import Post
+from app.models.photosession import Category, Photosession, Photo
 from app.extensions import db, bcrypt
 from app.__init__ import create_app
-from app.models.photosession import Category, Photosession
 
 # Конфигурация
 TOKEN = '7484238687:AAFywOTF8ZkhVIcXFwAtGG6IhlrqQBxGhrU'
@@ -20,11 +23,7 @@ user_states = {}
 menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Войти", callback_data="login")],
     [InlineKeyboardButton(text="Добавить статью", callback_data="add_article")],
-    [InlineKeyboardButton(text="Добавить фотосессию",  callback_data="add_photosession")]
-])
-
-category_menu = InlineKeyboardMarkup([
-    [InlineKeyboardButton(text=category.value, callback_data=category.name) for category in Category]
+    [InlineKeyboardButton(text="Добавить фотосессию", callback_data="add_photosession")]
 ])
 
 # Настройка директории для сохранения изображений
@@ -59,21 +58,33 @@ async def process_add_article(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         await update.callback_query.message.reply_text("Пожалуйста, сначала войдите в систему.")
 
-
 async def process_add_photosession(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Обработчик нажатия кнопки "Добавить фотосессию". Проверяет авторизацию и запускает процесс добавления фотосессии.
     """
-    # Ответить на событие (нажатие кнопки)
     await update.callback_query.answer()
 
-    # Проверяем, авторизован ли пользователь
     user_id = update.callback_query.from_user.id
     if user_auth.get(user_id):
         await update.callback_query.message.reply_text("Введите заголовок фотосессии:")
-        user_states[user_id] = {"state": "waiting_for_photosession_title"}  # Убедитесь, что это словарь
+        user_states[user_id] = {"state": "waiting_for_photosession_title"}
     else:
         await update.callback_query.message.reply_text("Пожалуйста, сначала войдите в систему.")
+
+# Функция для создания клавиатуры категорий
+def create_category_menu():
+    keyboard = []
+    row = []
+    for category in Category:
+        if len(row) == 2:
+            keyboard.append(row)
+            row = []
+        row.append(InlineKeyboardButton(text=category.value[:20], callback_data=f"category_{category.name}"))
+    if row:
+        keyboard.append(row)
+    return InlineKeyboardMarkup(keyboard)
+
+category_menu = create_category_menu()
 
 
 async def process_category_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -82,34 +93,43 @@ async def process_category_selection(update: Update, context: ContextTypes.DEFAU
     """
     await update.callback_query.answer()
 
-    # Получаем категорию, которую выбрал пользователь
-    category_name = update.callback_query.data  # Это имя категории, например, 'wedding'
+    # Получаем название категории из нажатой кнопки
+    category_name = update.callback_query.data.split('_')[1]
 
-    # Проверяем, есть ли такая категория в перечислении
+    # Проверяем, существует ли такая категория
     if category_name not in Category.__members__:
         await update.callback_query.message.reply_text("Ошибка: выбранная категория не существует.")
         return
 
-    category = Category[category_name]  # Получаем объект категории из перечисления
+    category = Category[category_name]
 
-    # Сохраняем выбранную категорию в состоянии пользователя
+    # Сохраняем категорию в состояние пользователя
     user_states[update.callback_query.from_user.id] = user_states.get(update.callback_query.from_user.id, {})
     user_states[update.callback_query.from_user.id]['category'] = category
 
-    # Создаем путь для загрузки фотографий
-    upload_folder = current_app.config['SERVER_PATH']
-    UPLOAD_FOLDER_PHOTOSESSION = os.path.join(upload_folder, category.name)  # Используем имя категории для папки
+    # Сохраняем значение category.name в context.user_data
+    context.user_data['category_name'] = category.name  # Измените здесь на category.name
 
-    # Проверяем, существует ли папка, и создаем её при необходимости
-    if not os.path.exists(UPLOAD_FOLDER_PHOTOSESSION):
-        os.makedirs(UPLOAD_FOLDER_PHOTOSESSION)
+    # Проверка правильного сохранения категории
+    print(f"Выбранная категория: {category.name}")
 
-    # Уведомляем пользователя о выбранной категории и запрашиваем заголовок
+    # Далее работа с файлами для сохранения изображений в правильной папке
+    with app.app_context():
+        upload_folder = current_app.config['SERVER_PATH']
+        UPLOAD_FOLDER_PHOTOSESSION = os.path.join(upload_folder, category.name)
+
+        if not os.path.exists(UPLOAD_FOLDER_PHOTOSESSION):
+            os.makedirs(UPLOAD_FOLDER_PHOTOSESSION)
+
+    # Сохраняем путь загрузки в context.user_data
+    context.user_data['upload_folder_photosession'] = UPLOAD_FOLDER_PHOTOSESSION
+
     await update.callback_query.message.reply_text(
-        f"Выбранная категория: {category.value}. Теперь введите заголовок фотосессии:")
+        f"Выбранная категория: {category.name}. Теперь загрузите изображения фотосессии:")
 
-    # Устанавливаем состояние на ожидание заголовка фотосессии
-    user_states[update.callback_query.from_user.id]['state'] = "waiting_for_photosession_title"
+    # Меняем состояние пользователя для ожидания изображений
+    user_states[update.callback_query.from_user.id]['state'] = "waiting_for_photosession_images"
+
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -128,7 +148,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await handle_article_text(update, context)
         elif user_states.get(user_id) == "waiting_for_images":
             await handle_article_images(update, context)
-
+        elif isinstance(user_states.get(user_id), dict) and user_states[user_id]['state'] in [
+            "waiting_for_photosession_title", "waiting_for_photosession_description",
+            "waiting_for_photosession_content", "waiting_for_photosession_category",
+            "waiting_for_photosession_images"
+        ]:
+            await handle_photosession_message(update, context)
 
 async def handle_photosession_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
@@ -142,77 +167,73 @@ async def handle_photosession_message(update: Update, context: ContextTypes.DEFA
             await handle_login(update, context)
         elif user_states.get(user_id) == "waiting_for_password":
             await handle_password(update, context)
-        elif user_states.get(user_id) == "waiting_for_photosession_title":
+        elif user_states[user_id]['state'] == "waiting_for_photosession_title":
             await handle_photosession_title(update, context)
-        elif user_states.get(user_id) == "waiting_for_photosession_description":
+        elif user_states[user_id]['state'] == "waiting_for_photosession_description":
             await handle_photosession_description(update, context)
-        elif user_states.get(user_id) == "waiting_for_photosession_content":
+        elif user_states[user_id]['state'] == "waiting_for_photosession_content":
             await handle_photosession_content(update, context)
-        elif user_states.get(user_id) == "waiting_for_photosession_category":
+        elif user_states[user_id]['state'] == "waiting_for_photosession_category":
             await handle_photosession_category(update, context)
-        elif user_states.get(user_id) == "waiting_for_photosession_images":
+        elif user_states[user_id]['state'] == "waiting_for_photosession_images":
             await handle_photosession_images(update, context)
-
 
 async def handle_photosession_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
-    current_state = user_states.get(user_id)
-    # Сохраняем заголовок фотосессии
     context.user_data['title'] = update.message.text
-    # Устанавливаем состояние на ожидание мета описания
-    user_states[user_id] = "waiting_for_photosession_description"
-
+    user_states[user_id]['state'] = "waiting_for_photosession_description"
+    # Логирование заголовка
+    print(f"Заголовок фотосессии: {context.user_data['title']}")
     await update.message.reply_text("Теперь введите мета описание:")
-
 
 async def handle_photosession_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
-    # Сохраняем мета описание фотосессии
     context.user_data['meta_description'] = update.message.text
-    # Устанавливаем состояние на ожидание содержания
-    user_states[user_id] = "waiting_for_photosession_content"
+    user_states[user_id]['state'] = "waiting_for_photosession_content"
 
     await update.message.reply_text("Теперь введите содержание фотосессии:")
 
-
 async def handle_photosession_content(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
-    # Сохраняем содержание фотосессии
     context.user_data['content'] = update.message.text
-    # Устанавливаем состояние на ожидание категории
-    user_states[user_id] = "waiting_for_photosession_category"
+    user_states[user_id]['state'] = "waiting_for_photosession_category"
 
-    await update.message.reply_text("Теперь выберите категорию фотосессии из списка:")
-
+    await update.message.reply_text("Теперь выберите категорию фотосессии из списка:", reply_markup=category_menu)
 
 async def handle_photosession_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
-    category_name = update.message.text  # Получаем выбранную категорию от пользователя
-    # Проверка, что категория существует
+    category_name = update.message.text.lower()  # Преобразуем в верхний регистр для соответствия с Enum
+
     if category_name not in Category.__members__:
         await update.message.reply_text("Ошибка: выбранная категория не существует. Попробуйте снова.")
         return
 
-    # Сохраняем выбранную категорию
-    context.user_data['category'] = Category[category_name]
-    user_states[user_id] = "waiting_for_photosession_images"
+    category = Category[category_name]
+    context.user_data['category'] = category
+    user_states[user_id]['state'] = "waiting_for_photosession_images"
 
-    await update.message.reply_text(f"Выбранная категория: {context.user_data['category'].value}. Теперь загрузите изображения фотосессии:")
+    await update.message.reply_text(f"Выбранная категория: {category.value}. Теперь загрузите изображения фотосессии:")
 
-#Добавление фото Нужно  потом ошибки обработать!!!!!!!!!!!!!!!!!
+
 async def handle_photosession_images(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    UPLOAD_FOLDER_PHOTOSESSION = context.user_data.get('upload_folder_photosession')
+
     if update.message.photo:
         photo = update.message.photo[-1].file_id
         file = await context.bot.get_file(photo)
-        file_path = os.path.join(UPLOAD_FOLDER, f"{photo}.jpg")
+        file_path = os.path.join(UPLOAD_FOLDER_PHOTOSESSION, f"{photo}.jpg")  #################### КУда сохранять
         await file.download_to_drive(file_path)
         if 'photos' not in context.user_data:
             context.user_data['photos'] = []
         context.user_data['photos'].append(os.path.basename(file_path))
+
+        # Логирование пути к файлу изображения
+        print(f"Изображение сохранено: {file_path}")
+
         await update.message.reply_text(
             "Изображение добавлено. Отправьте еще изображения или напишите 'готово', чтобы завершить.")
     elif update.message.text.lower() == 'готово':
-        await finalize_article(update, context)
+        await finalize_photosession(update, context)
     else:
         await update.message.reply_text("Пожалуйста, отправьте изображение или напишите 'готово', чтобы завершить.")
 
@@ -262,7 +283,6 @@ async def handle_article_text(update: Update, context: ContextTypes.DEFAULT_TYPE
         user_states[user_id] = "waiting_for_images"
         await update.message.reply_text("Теперь отправьте изображения (если есть):")
 
-#Нужно потом ошибки обработать!!!!!!!!!!!!!!!!!
 async def handle_article_images(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Обрабатывает загрузку изображений для статьи и завершает процесс добавления статьи.
@@ -297,24 +317,57 @@ async def finalize_article(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await update.message.reply_text("Статья успешно добавлена!")
     user_states.pop(update.message.from_user.id, None)
 
-
+# В функции finalize_photosession добавьте проверку на наличие категории
 async def finalize_photosession(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
 
-    # Получаем все данные из user_data
     title = context.user_data.get('title')
     meta_description = context.user_data.get('meta_description')
     content = context.user_data.get('content')
-    category = context.user_data.get('category')
-    photos = context.user_data.get('photos', [])
+    category_name = context.user_data.get('category_name')  # Получаем category.name
+    photo_filenames = context.user_data.get('photos', [])
 
-    new_photoshoot = Photosession(title=title, meta_description=meta_description, content=content, category=category, photos=photos)
+    # Логирование всех данных перед отправкой в базу
+    print(f"Финальные данные фотосессии: Заголовок: {title}, Описание: {meta_description}, "
+          f"Контент: {content}, Категория: {category_name}, Фото: {photo_filenames}")
 
-    await update.message.reply_text("Фотосессия успешно добавлена!")
+    # Проверка наличия всех необходимых данных
+    if not all([title, meta_description, content, category_name]):
+        await update.message.reply_text("Ошибка: не все необходимые данные для фотосессии заполнены.")
+        return
 
-    # Сброс состояний пользователя
-    user_states[user_id] = None
-    context.user_data.clear()  # Очищаем пользовательские данные
+    # Убедимся, что категория - это строка
+    if not isinstance(category_name, str):
+        await update.message.reply_text("Ошибка: неверная категория фотосессии.")
+        return
+
+    try:
+        new_photoshoot = Photosession(
+            title=title,
+            meta_description=meta_description,
+            content=content,
+            category=category_name,  # Используем category_name
+            created_at=datetime.utcnow(),
+            show_on_main=False
+        )
+        db.session.add(new_photoshoot)
+        db.session.flush()  # Чтобы получить id новой фотосессии
+
+        for filename in photo_filenames:
+            photo = Photo(filename=filename, photosession_id=new_photoshoot.id)
+            db.session.add(photo)
+
+        db.session.commit()
+        await update.message.reply_text("Фотосессия успешно добавлена!")
+    except IntegrityError as e:
+        db.session.rollback()
+        await update.message.reply_text(f"Ошибка при сохранении фотосессии: {str(e)}")
+    except Exception as e:
+        db.session.rollback()
+        await update.message.reply_text(f"Произошла неожиданная ошибка: {str(e)}")
+    finally:
+        user_states[user_id] = None
+        context.user_data.clear()
 
 
 def main() -> None:
@@ -323,16 +376,14 @@ def main() -> None:
     """
     application = ApplicationBuilder().token(TOKEN).build()
 
-    # Регистрация обработчиков
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(process_login, pattern='login'))
     application.add_handler(CallbackQueryHandler(process_add_article, pattern='add_article'))
-    application.add_handler(CallbackQueryHandler(process_add_article, pattern='add_photosession'))
-    application.add_handler(CallbackQueryHandler(process_add_article, pattern='process_category_selection'))
+    application.add_handler(CallbackQueryHandler(process_add_photosession, pattern='add_photosession'))
+    application.add_handler(CallbackQueryHandler(process_category_selection, pattern='^category_'))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.add_handler(MessageHandler(filters.PHOTO, handle_message))
 
-    # Запуск бота
     application.run_polling()
 
 if __name__ == '__main__':
