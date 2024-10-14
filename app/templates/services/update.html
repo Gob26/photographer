@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Изменить услугу{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <form method="POST" class="dark-grey-form p-3 rounded">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.name.label(class="text-light") }}<br>
+        {{ form.name(class="form-control mb-2") }}
+      </div>
+      <div class="form-group">
+        {{ form.description.label(class="text-light") }}<br>
+        {{ form.description(class="form-control mb-2") }}
+      </div>
+      <div class="form-group">
+        {{ form.price.label(class="text-light") }}<br>
+        {{ form.price(class="form-control mb-2") }}
+      </div>
+      <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+    </form>
+  </div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+
+{% endblock %}

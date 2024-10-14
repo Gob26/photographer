@@ -10,6 +10,7 @@ from app.models.post import Post
 from app.models.photosession import Category, Photosession, Photo
 from app.extensions import db, bcrypt
 from app.__init__ import create_app
+from app.models.services import Service
 
 # Конфигурация
 TOKEN = '7484238687:AAFywOTF8ZkhVIcXFwAtGG6IhlrqQBxGhrU'
@@ -23,8 +24,10 @@ user_states = {}
 menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Войти", callback_data="login")],
     [InlineKeyboardButton(text="Добавить статью", callback_data="add_article")],
-    [InlineKeyboardButton(text="Добавить фотосессию", callback_data="add_photosession")]
+    [InlineKeyboardButton(text="Добавить фотосессию", callback_data="add_photosession")],
+    [InlineKeyboardButton(text="Добавить услугу", callback_data="add_service")]
 ])
+
 
 # Настройка директории для сохранения изображений
 UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'static', 'img', 'blog')
@@ -154,11 +157,10 @@ async def process_category_selection(update: Update, context: ContextTypes.DEFAU
     user_states[update.callback_query.from_user.id]['state'] = "waiting_for_photosession_images"
 
 
-
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Основной обработчик текстовых сообщений и изображений.
-    Обрабатывает различные состояния пользователя: авторизация, добавление статьи.
+    Обрабатывает различные состояния пользователя: авторизация, добавление статьи, добавление услуги.
     """
     user_id = update.message.from_user.id
 
@@ -177,6 +179,23 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "waiting_for_photosession_images"
         ]:
             await handle_photosession_message(update, context)
+        elif user_states.get(user_id) in ["waiting_for_service_name", "waiting_for_service_description", "waiting_for_service_price"]:
+            await handle_service_message(update, context)
+
+
+async def process_add_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Обработчик нажатия кнопки "Добавить услугу". Проверяет авторизацию и запускает процесс добавления услуги.
+    """
+    await update.callback_query.answer()
+
+    if user_auth.get(update.callback_query.from_user.id):
+        await update.callback_query.message.reply_text("Введите название услуги:")
+        user_states[update.callback_query.from_user.id] = "waiting_for_service_name"
+    else:
+        await update.callback_query.message.reply_text("Пожалуйста, сначала войдите в систему.")
+
+
 
 async def handle_photosession_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
@@ -393,6 +412,62 @@ async def finalize_photosession(update: Update, context: ContextTypes.DEFAULT_TY
         context.user_data.clear()
 
 
+async def handle_service_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Основной обработчик текстовых сообщений для услуг.
+    Обрабатывает различные состояния пользователя: ввод названия, описания и цены услуги.
+    """
+    user_id = update.message.from_user.id
+
+    with app.app_context():
+        if user_states.get(user_id) == "waiting_for_service_name":
+            await handle_service_name(update, context)
+        elif user_states.get(user_id) == "waiting_for_service_description":
+            await handle_service_description(update, context)
+        elif user_states.get(user_id) == "waiting_for_service_price":
+            await handle_service_price(update, context)
+
+
+async def handle_service_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.message.from_user.id
+    context.user_data['service_name'] = update.message.text
+    user_states[user_id] = "waiting_for_service_description"
+    await update.message.reply_text("Теперь введите описание услуги:")
+
+async def handle_service_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.message.from_user.id
+    context.user_data['service_description'] = update.message.text
+    user_states[user_id] = "waiting_for_service_price"
+    await update.message.reply_text("Теперь введите цену услуги:")
+
+async def handle_service_price(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.message.from_user.id
+    try:
+        price = float(update.message.text)
+        context.user_data['service_price'] = price
+        await finalize_service(update, context)
+    except ValueError:
+        await update.message.reply_text("Пожалуйста, введите корректную цену (число):")
+
+
+
+async def finalize_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Завершает процесс добавления услуги, сохраняя её в базу данных.
+    """
+    name = context.user_data['service_name']
+    description = context.user_data['service_description']
+    price = context.user_data['service_price']
+
+    new_service = Service(name=name, description=description, price=price)
+    db.session.add(new_service)
+    db.session.commit()
+
+    await update.message.reply_text("Услуга успешно добавлена!")
+    user_states.pop(update.message.from_user.id, None)
+
+
+
 def main() -> None:
     """
     Основная функция для запуска бота.
@@ -404,6 +479,7 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(process_login, pattern='login'))
     application.add_handler(CallbackQueryHandler(process_add_article, pattern='add_article'))
     application.add_handler(CallbackQueryHandler(process_add_photosession, pattern='add_photosession'))
+    application.add_handler(CallbackQueryHandler(process_add_service, pattern='add_service'))
     application.add_handler(CallbackQueryHandler(process_category_selection, pattern='^category_'))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.add_handler(MessageHandler(filters.PHOTO, handle_message))

@@ -1,6 +1,7 @@
 from flask_wtf.file import FileAllowed, MultipleFileField
+from wtforms.fields.numeric import FloatField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField, FileField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError,DataRequired, Optional
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, DataRequired, Optional, NumberRange
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
 from app.models.user import User
@@ -27,6 +28,11 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
+# Форма услуг
+class CreateServicesForm(FlaskForm):
+    name = StringField('Название услуги', validators=[Length(min=5, max=90)])
+    description = StringField('Описание услуги', validators=[Length(min=20, max=210)])
+    price = FloatField('Цена', validators=[DataRequired(), NumberRange(min=0, message="Цена должна быть положительной")])
 
 #Добавление фотосессии
 class CreatePhotosessionForm(FlaskForm):

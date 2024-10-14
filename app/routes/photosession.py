@@ -162,7 +162,7 @@ def update(category_name, id):  # Changed function name from update_photoshoot t
     # If GET request or form validation fails, render the update form
     return render_template('photosession/update_photoshoot.html', form=form, photosession=photosession)
 
-#пока конеретной фотосессии
+#показ конкретной фотосессии
 @photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>', methods=['GET'])
 def view_photoshoot(category_name, id):
     # Проверяем, что категория существует в enum

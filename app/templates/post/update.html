@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Обновление поста{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-light">Обновить пост</h1>
+    <form method="POST" enctype="multipart/form-data" class="dark-grey-form p-3 rounded">
+        <div class="form-group">
+            <label for="title_post" class="text-light">Заголовок поста</label>
+            <input type="text" class="form-control mb-2" id="title_post" name="title_post" value="{{ post.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="snippet_post" class="text-light">Сниппет</label>
+            <input type="text" class="form-control mb-2" id="snippet_post" name="snippet_post" value="{{ post.snippet }}" required>
+        </div>
+        <div class="form-group">
+            <label for="content_post" class="text-light">Содержание поста</label>
+            <textarea class="form-control mb-2" id="content_post" name="content_post" rows="5" required>{{ post.content }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="images" class="text-light">Загрузить новые изображения</label>
+            <input type="file" class="form-control-file mb-2" id="images" name="images" multiple>
+        </div>
+
+        {% if post.images %}
+        <h3 class="text-light">Текущие изображения</h3>
+        <div class="row">
+            {% for image in post.images %}
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='uploads/' + image) }}" class="img-thumbnail" alt="Изображение {{ loop.index }}">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="delete_images" value="{{ image }}" id="delete_image_{{ loop.index }}">
+                    <label class="form-check-label text-light" for="delete_image_{{ loop.index }}">
+                        Удалить это изображение
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Обновить пост</button>
+    </form>
+</div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Добавление услуги{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Добавить новую услугу</h2>
+
+    <form class="dark-grey-form p-3 rounded" method="POST" action="{{ url_for('services.create_service') }}" enctype="multipart/form-data">
+        <!-- CSRF токен для защиты формы -->
+        {{ form.hidden_tag() }}
+
+        <!-- Название услуги -->
+        <div class="form-group mt-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <div class="text-danger">{{ form.name.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Описание услуги -->
+        <div class="form-group mt-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+            {% if form.description.errors %}
+                <div class="text-danger">{{ form.description.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Цена услуги -->
+        <div class="form-group mt-3">
+            {{ form.price.label(class="form-label") }}
+            {{ form.price(class="form-control") }}
+            {% if form.price.errors %}
+                <div class="text-danger">{{ form.price.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Кнопка отправки формы -->
+        <button type="submit" class="btn btn-primary mt-4">Сохранить</button>
+    </form>
+
+    <!-- Сообщение об ошибке -->
+    {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+    {% endif %}
+</div>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+{% endblock %}

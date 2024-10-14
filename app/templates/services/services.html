@@ -1,0 +1,83 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Услуги{% endblock %}
+
+{% block content %}
+<!-- Подключаем Font Awesome для иконок -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<h1 class="mb-4 text-white">Наши Услуги</h1>
+
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Услуга</th>
+            <th scope="col"></th>
+            <th scope="col">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+        <tr>
+            <td>{{ service.name }}</td>
+            <td>{{ service.short_description }}</td> <!-- Краткое описание услуги -->
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serviceModal{{ service.id }}">
+                    Подробнее
+                </button>
+                {% if current_user.is_authenticated %}
+                <!-- Обновленная кнопка редактирования -->
+                <a href="{{ url_for('services.update', service_id=service.id) }}" class="btn btn-outline-secondary btn-sm" title="Редактировать">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <!-- Обновленная кнопка удаления -->
+                <form method="POST" action="{{ url_for('services.delete', service_id=service.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить эту услугу?');">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+
+        <!-- Модальное окно с детальной информацией об услуге -->
+        <div class="modal fade" id="serviceModal{{ service.id }}" tabindex="-1" aria-labelledby="serviceModalLabel{{ service.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="serviceModalLabel{{ service.id }}">{{ service.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ service.description }}</p> <!-- Полное описание -->
+                        <p><strong>Цена:</strong> <span id="price{{ service.id }}">Скрыто</span></p>
+                        <button type="button" class="btn btn-secondary" onclick="showPrice({{ service.price }}, {{ service.id }})">Показать цену</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function showPrice(price, serviceId) {
+        document.getElementById('price' + serviceId).innerText = price.toFixed(2) + ' ₽';
+    }
+</script>
+
+<style>
+    /* Стили для кнопок редактирования и удаления */
+    .btn-outline-secondary, .btn-outline-danger {
+        color: #fff;
+        border-color: #fff;
+    }
+    .btn-outline-secondary:hover, .btn-outline-danger:hover {
+        color: #000;
+        background-color: #fff;
+    }
+</style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
+
+{% endblock %}

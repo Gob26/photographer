@@ -25,16 +25,43 @@ def get_random_photosessions(count=6):
     return random.sample(photosessions, min(len(photosessions), count))
 
 
-def save_picture(picture):   #Сохраняем уменьшенное изображение и передаем кго новое имя
+import secrets
+import os
+from PIL import Image
+from flask import current_app
+
+
+def save_picture(picture, category_folder):
+    # Генерируем уникальное имя для изображения
     random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(picture.filename) # разделяем имя файла и расширение
-    picture_fn = random_hex + f_ext               # формируем имя файла  
-    picture_path = os.path.join(current_app.config['SERVER_PATH'], picture_fn) # путь к файлу
-    output_size = (125, 125)
-    i = Image.open(picture)      # открываем изображение
-    i.thumbnail(output_size)     # изменяем размер
-    i.save(picture_path)            
-    return picture_fn           # возвращаем измененное имя для базы данных
+    _, f_ext = os.path.splitext(picture.filename)
+
+    # Изменяем расширение на .webp
+    picture_fn = random_hex + ".webp"
+
+    # Путь к сохранению изображения
+    picture_path = os.path.join(category_folder, picture_fn)
+
+    # Открываем изображение с помощью PIL
+    i = Image.open(picture)
+
+    # Оптимизация: изменяем размер до необходимого и сохраняем в формате webp
+    output_size = (800, 800)  # Вы можете изменить размер на подходящий
+    i.thumbnail(output_size)
+
+    # Пробуем сохранить с оптимизацией для уменьшения размера
+    try:
+        i.save(picture_path, format="WEBP", quality=85, optimize=True)
+    except Exception as e:
+        raise ValueError(f"Ошибка при сохранении изображения: {str(e)}")
+
+    # Проверяем, не превышает ли размер 150 КБ
+    if os.path.getsize(picture_path) > 150 * 1024:
+        # Если изображение слишком большое, пробуем снизить качество
+        i.save(picture_path, format="WEBP", quality=70, optimize=True)
+
+    # Возвращаем новое имя файла для хранения в базе данных
+    return picture_fn
 
 
 def compress_image(image_path, output_path, quality=85): #сжимаем и переводим в формат webp

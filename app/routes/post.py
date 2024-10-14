@@ -2,7 +2,7 @@ import os
 import logging
 from crypt import methods
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from app.utils.functions import allowed_file
 from flask_login import login_required
@@ -119,6 +119,7 @@ def delete(post_id):
     try:
         db.session.delete(post)
         db.session.commit()
+        flash('Пост успешно удален', 'success')
         logging.info(f"Post deleted successfully: {post.title}")
         return redirect(url_for('post.all'))
     except Exception as e:
