@@ -24,12 +24,17 @@ def create_photoshoot():
         # Преобразуем строковое значение категории в enum
         category = Category[form.category.data]
 
+        # Обрабатываем координаты
+        latitude, longitude = form.process_coordinates()
+
         # Создаем новый объект фотосессии
         new_photoshoot = Photosession(
             title=form.title.data,
             meta_description=form.meta_description.data,
             content=form.content.data,
-            category=category
+            category=category,
+            latitude=latitude,  # Координаты могут быть None
+            longitude=longitude,  # Координаты могут быть None
         )
 
         # Добавляем фотосессию в базу данных

@@ -21,7 +21,7 @@
             {% if post.images %}
                 {% for image in post.images %}
                     <div class="post-image {% if loop.index % 2 == 0 %}image-right{% else %}image-left{% endif %}">
-                        <img src="{{ url_for('static', filename='img/blog/' + image) }}" alt="{{ post.title }} - Image {{ loop.index }}">
+                        <img src="{{ url_for('static', filename='upload/blog/' + image) }}" alt="{{ post.title }} - Image {{ loop.index }}">
                     </div>
                     {% if loop.index % 2 == 0 %}
                         <div class="clearfix"></div>

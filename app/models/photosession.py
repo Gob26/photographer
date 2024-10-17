@@ -32,6 +32,10 @@ class Photosession(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     photos = db.relationship('Photo', backref='photosession', lazy=True)
     show_on_main = db.Column(Boolean, default=False)
+    # Поля для координат, nullable=True делает их необязательными
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+
 
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

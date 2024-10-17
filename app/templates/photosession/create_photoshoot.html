@@ -47,6 +47,15 @@
             {% endif %}
         </div>
 
+        <!-- Координаты: широта и долгота -->
+        <div class="form-group mt-3">
+            {{ form.coordinates.label(class="form-label") }}
+            {{ form.coordinates(class="form-control", placeholder="Введите координаты в формате: 45.052016, 41.958984") }}
+            {% if form.coordinates.errors %}
+                <div class="text-danger">{{ form.coordinates.errors[0] }}</div>
+            {% endif %}
+        </div>
+
         <!-- Фотографии -->
         <div class="form-group mt-3">
             {{ form.photos.label(class="form-label") }}

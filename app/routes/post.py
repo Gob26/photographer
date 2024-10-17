@@ -2,32 +2,33 @@ import os
 import logging
 from crypt import methods
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from werkzeug.utils import secure_filename
 from app.utils.functions import allowed_file
 from flask_login import login_required
 from ..extensions import db
 from ..models.post import Post
 
-# Настройка логирования
-logging.basicConfig(level=logging.DEBUG)
-
-# Определение базовой директории и UPLOAD_FOLDER
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'static', 'img', 'blog')
-
-# Создаем директорию, если она не существует
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 post = Blueprint('post', __name__)
 
 
 def save_uploaded_files(files):
     image_paths = []
+    # Получаем основную папку для загрузки файлов из конфигурации
+    upload_folder = current_app.config['SERVER_PATH']
+
+    # Создаем путь к папке для сохранения фотографий на основе категории
+    category_folder = os.path.join(upload_folder, 'blog')
+
+    # Проверяем, существует ли папка для данной категории, если нет — создаем
+    if not os.path.exists(category_folder):
+        os.makedirs(category_folder)
+
     for file in files:
         if file and allowed_file(file.filename): # Проверка на допустимый формат
             filename = secure_filename(file.filename)
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file_path = os.path.join(category_folder, filename)
             logging.debug(f"Attempting to save file to: {file_path}")
             try:
                 file.save(file_path)

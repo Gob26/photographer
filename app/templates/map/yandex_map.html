@@ -1,0 +1,75 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Карта фотосессий{% endblock %}
+
+{% block content %}
+<!-- Обертка для карты -->
+<div id="map" style="width: 90%; height: 90%; min-height: 600px; min-width: 600px;"></div>
+
+<!-- Подключение API Яндекс.Карт -->
+<script src="https://api-maps.yandex.ru/2.1/?apikey=71741a1f-87f9-42f7-96f5-08ff6ceeb2a3&lang=ru_RU"></script>
+
+<script>
+    var map;
+    var photoSessionsLayer;
+
+    function initMap() {
+        // Создаем карту
+        map = new ymaps.Map('map', {
+            center: [45.0431, 41.9749], // Центр Ставрополя
+            zoom: 12,
+            controls: ['zoomControl', 'fullscreenControl']
+        });
+
+        // Создаем коллекцию для фотосессий
+        photoSessionsLayer = new ymaps.GeoObjectCollection();
+
+        // Запрашиваем данные с сервера
+        fetch('{{ url_for("map.map_data") }}')
+            .then(response => response.json())
+            .then(data => {
+                // Добавляем фотосессии на карту
+                data.photo_sessions.forEach(session => {
+                    var placemark = new ymaps.Placemark(session.coords, {
+                        // Всплывающий текст при наведении
+                        hintContent: session.title,
+                        // Контент балуна
+                        balloonContent: `
+                            <div>
+                                <strong>${session.title}</strong><br>
+                                <em>${session.description}</em><br>
+                                <p><a href="${session.session_url}" target="_blank">Перейти к фотосессии</a></p>
+                                <br>
+                                <img src="${session.photo_url}" alt="${session.description}" style="width: 100%;">
+                            </div>
+                        `
+                    }, {
+                        // Используем кастомное изображение как маркер
+                        iconLayout: 'default#image',
+                        iconImageHref: session.photo_url,  // URL фотографии
+                        iconImageSize: [40, 40], // Размер иконки (маркер)
+                        iconImageOffset: [-20, -20], // Смещение иконки
+                        // Цвет маркера (опционально, если не используете изображения)
+                        // iconColor: '#0095b6'
+                    });
+                    photoSessionsLayer.add(placemark);
+                });
+
+                // Добавляем слой на карту
+                map.geoObjects.add(photoSessionsLayer);
+            })
+            .catch(error => console.error('Ошибка загрузки данных:', error));
+    }
+
+    // Инициализация карты после загрузки API
+    ymaps.ready(initMap);
+</script>
+
+<!-- Стили -->
+<style>
+    #map {
+        width: 100%;
+        height: 100vh;
+    }
+</style>
+{% endblock %}

@@ -31,7 +31,7 @@
         <div class="row">
             {% for photo in photosession.photos %}
             <div class="col-md-4 mb-3">
-                <img src="{{ url_for('static', filename='uploads/' + photosession.category.name + '/' + photo.filename) }}" class="img-thumbnail" alt="{{ photo.filename }}">
+                <img src="{{ url_for('static', filename='upload/' + photoshoot.category.name + '/' + photo.filename) }}" class="img-thumbnail" alt="{{ photo.filename }}">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="delete_photos" value="{{ photo.id }}" id="delete_photo_{{ photo.id }}">
                     <label class="form-check-label text-light" for="delete_photo_{{ photo.id }}">

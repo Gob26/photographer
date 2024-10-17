@@ -1,3 +1,5 @@
+from multiprocessing.managers import Value
+
 from flask_wtf.file import FileAllowed, MultipleFileField
 from wtforms.fields.numeric import FloatField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField, FileField, BooleanField, TextAreaField
@@ -42,6 +44,18 @@ class CreatePhotosessionForm(FlaskForm):
     category = SelectField('Категория', choices=[(cat.name, cat.value) for cat in Category],
                            validators=[DataRequired()])
     photos = MultipleFileField('Фотографии', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'webp'])])
+    coordinates = StringField('Координаты (широта, долгота)', validators=[Optional()])
+
+    def process_coordinates(self):
+        # Если координаты введены, то разделяем их
+        if self.coordinates.data:
+            try:
+                lat, lon = map(float, self.coordinates.data.split(','))
+                return lat, lon
+            except ValueError:
+                raise ValidationError("Неправильный формат координат. Введите в формате: широта, долгота")
+        # Если координаты не введены, возвращаем None
+        return None, None
 
 #Форма для Идей фотосессий
 class GPTForm(FlaskForm):

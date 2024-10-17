@@ -1,0 +1,203 @@
+.
+├── alembic
+│   ├── env.py
+│   ├── __pycache__
+│   │   └── env.cpython-312.pyc
+│   ├── README
+│   ├── script.py.mako
+│   └── versions
+├── alembic.ini
+├── app
+│   ├── config.py
+│   ├── crud
+│   │   └── __init__.py
+│   ├── extensions.py
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── photosession.py
+│   │   ├── post.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── photosession.cpython-312.pyc
+│   │   │   ├── post.cpython-312.pyc
+│   │   │   ├── services.cpython-312.pyc
+│   │   │   └── user.cpython-312.pyc
+│   │   ├── services.py
+│   │   └── user.py
+│   ├── __pycache__
+│   │   ├── config.cpython-312.pyc
+│   │   ├── extensions.cpython-312.pyc
+│   │   ├── forms.cpython-312.pyc
+│   │   └── __init__.cpython-312.pyc
+│   ├── routes
+│   │   ├── contacts.py
+│   │   ├── gpt_idea.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── photosession.py
+│   │   ├── post.py
+│   │   ├── __pycache__
+│   │   │   ├── contacts.cpython-312.pyc
+│   │   │   ├── gpt_idea.cpython-312.pyc
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── main.cpython-312.pyc
+│   │   │   ├── photosession.cpython-312.pyc
+│   │   │   ├── post.cpython-312.pyc
+│   │   │   ├── services.cpython-312.pyc
+│   │   │   └── user.cpython-312.pyc
+│   │   ├── services.py
+│   │   └── user.py
+│   ├── static
+│   │   ├── css
+│   │   │   ├── blocks
+│   │   │   ├── fonts.css
+│   │   │   ├── libs
+│   │   │   ├── main.css
+│   │   │   ├── photosession
+│   │   │   └── services.css
+│   │   ├── fonts
+│   │   │   ├── FontAwesome
+│   │   │   └── Montserrat
+│   │   ├── gen
+│   │   │   └── post
+│   │   ├── img
+│   │   │   ├── 1.jpg
+│   │   │   ├── 2.jpg
+│   │   │   ├── 3.jpg
+│   │   │   ├── background.jpg
+│   │   │   ├── blog
+│   │   │   └── student.png
+│   │   ├── js
+│   │   │   ├── app.js
+│   │   │   ├── blocks
+│   │   │   ├── libs
+│   │   │   └── services.js
+│   │   └── upload
+│   │       ├── 00_19_40_12.Still246.jpg
+│   │       ├── 2024-09-21_21-13-40.png
+│   │       ├── 2024-09-30_19-05-30.png
+│   │       ├── 2533f918a2bed86e.jpg
+│   │       ├── 3e56983984d2b72b.png
+│   │       ├── 488aa52b1ca8c471.jpg
+│   │       ├── 4fe23002b11d5d07.jpg
+│   │       ├── 62ff90f81de5b609.png
+│   │       ├── 6e686f62d3f59e5a.png
+│   │       ├── Aw7dUecYTMq7cuQ8sbR6Gg.png
+│   │       ├── c0d5a206603355a4.png
+│   │       ├── children
+│   │       ├── couple
+│   │       ├── D4eKfHK9QPuvMR1cQ8KJQw.png
+│   │       ├── dbb85fb3fc73ceff.jpg
+│   │       ├── dd39d1f03daa9835.jpg
+│   │       ├── discharge
+│   │       ├── family
+│   │       ├── fc44396cfc2823a9.png
+│   │       ├── female
+│   │       ├── group
+│   │       ├── HwQJixTBSM6OsJB3V0T25A.png
+│   │       ├── J7GRXrZWQYaqh_NjU_3Ybw.webp
+│   │       ├── JaglT_ZMR0uZ8nFOeARYkA.jpg
+│   │       ├── jpg
+│   │       ├── kingsocol.webp
+│   │       ├── logo1.jpg
+│   │       ├── logo.jpg
+│   │       ├── logo.png
+│   │       ├── male
+│   │       ├── photo_2024-09-21_19-02-17_4.jpg
+│   │       ├── photo_2024-09-21_19-02-17_5.jpg
+│   │       ├── portrait
+│   │       ├── reportage
+│   │       ├── street
+│   │       ├── studio
+│   │       ├── wedding
+│   │       └── wedding_photographer
+│   ├── templates
+│   │   ├── contacts.html
+│   │   ├── main
+│   │   │   ├── base.html
+│   │   │   ├── _flash.html
+│   │   │   ├── _footer.html
+│   │   │   ├── _header.html
+│   │   │   ├── idea.html
+│   │   │   ├── index.html
+│   │   │   └── __init__.py
+│   │   ├── photosession
+│   │   │   ├── categories.html
+│   │   │   ├── category_photoshoots.html
+│   │   │   ├── create_photoshoot.html
+│   │   │   ├── list_photoshoots.html
+│   │   │   ├── photosession_all.html
+│   │   │   ├── update_photoshoot.html
+│   │   │   └── view_photoshoot.html
+│   │   ├── post
+│   │   │   ├── all.html
+│   │   │   ├── create.html
+│   │   │   ├── detail.html
+│   │   │   ├── __init__.py
+│   │   │   └── update.html
+│   │   ├── services
+│   │   │   ├── create_service.html
+│   │   │   ├── services.html
+│   │   │   └── update.html
+│   │   └── user
+│   │       ├── __init__.py
+│   │       ├── login.html
+│   │       └── register.html
+│   ├── tests
+│   └── utils
+│       ├── auth.txt
+│       ├── functions.py
+│       ├── Germany, Berlin ROUTERS.ovpn
+│       ├── gpt_service.py
+│       ├── __init__.py
+│       ├── instagram_proxy_test.py
+│       ├── instagram.py
+│       ├── __pycache__
+│       │   ├── functions.cpython-312.pyc
+│       │   ├── gpt_service.cpython-312.pyc
+│       │   ├── __init__.cpython-312.pyc
+│       │   └── telegram_bot.cpython-312.pyc
+│       ├── telegram_bot
+│       │   ├── bot.py
+│       │   ├── config.py
+│       │   ├── handlers.py
+│       │   ├── __init__.py
+│       │   └── utils.py
+│       └── telegram_bot.py
+├── instance
+│   ├── project.db
+│   └── test.db
+├── migrations
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── __pycache__
+│   │   └── env.cpython-312.pyc
+│   ├── README
+│   ├── script.py.mako
+│   └── versions
+│       ├── 09800e5d548d_2044.py
+│       ├── 1070d64517a8_добавляем_аватарку.py
+│       ├── 2114433f5ba6_добавлеени_user_модель.py
+│       ├── 48052875be9e_отобращение_нескольких_фотографий_в_.py
+│       ├── 5b9fd926e4dd_рандомное_фотосессии.py
+│       ├── 84f6c394ecc4_2049.py
+│       ├── c0f397c5a5c9_добавление_фото_в_базу_данных.py
+│       ├── c11c8851df65_добавляем_аватарку.py
+│       ├── c97be29d9f7a_recreate_migration_after_revision_.py
+│       └── __pycache__
+│           ├── 09800e5d548d_2044.cpython-312.pyc
+│           ├── 1070d64517a8_добавляем_аватарку.cpython-312.pyc
+│           ├── 2114433f5ba6_добавлеени_user_модель.cpython-312.pyc
+│           ├── 48052875be9e_отобращение_нескольких_фотографий_в_.cpython-312.pyc
+│           ├── 5b9fd926e4dd_рандомное_фотосессии.cpython-312.pyc
+│           ├── 84f6c394ecc4_2049.cpython-312.pyc
+│           ├── c0f397c5a5c9_добавление_фото_в_базу_данных.cpython-312.pyc
+│           ├── c11c8851df65_добавляем_аватарку.cpython-312.pyc
+│           └── c97be29d9f7a_recreate_migration_after_revision_.cpython-312.pyc
+├── requirements.txt
+├── run.py
+└── structure.txt
+
+55 directories, 146 files
