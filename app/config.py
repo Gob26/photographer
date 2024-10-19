@@ -1,7 +1,4 @@
 import os
-
-import os
-
 class Config(object):
     APPNAME = 'app'                                    # Имя приложения
     ROOT = os.path.abspath(os.path.dirname(__file__))  # Корень приложения (файл, где находится конфигурация)
@@ -20,4 +17,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # Токен для Telegram-бота
-    TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+    TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+
+    #ВК

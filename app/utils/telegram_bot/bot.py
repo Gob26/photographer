@@ -1,18 +1,20 @@
+from dotenv import load_dotenv
 import os
-from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters
-from app.__init__ import create_app
-from app.utils.telegram_bot.config import TOKEN
 from app.utils.telegram_bot.handlers import (
     start, show_menu, process_login, process_add_article, process_add_photosession,
     process_add_service, process_category_selection, handle_message
 )
 
+load_dotenv()  # Это загрузит переменные окружения из файла .env
+telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')
+
+
 def main() -> None:
     """
     Основная функция для запуска бота.
     """
-    application = ApplicationBuilder().token(TOKEN).build()
+    application = ApplicationBuilder().token(telegram_token).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.Regex("^Меню$"), show_menu))
