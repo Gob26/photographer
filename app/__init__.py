@@ -1,6 +1,6 @@
 from flask import Flask
 from app.extensions import db, migrate, login_manager, cache
-
+from dotenv import load_dotenv
 from .config import Config
 #импортируем роутеры
 from .routes.user import user
@@ -12,6 +12,7 @@ from .routes.photosession import photoshoot_bp
 from .routes.gpt_idea import gpt
 from .routes.yandex_map import map
 def create_app(config_class=Config):
+    load_dotenv()
 
     app = Flask(__name__)
     app.config.from_object(config_class) # Инициализация конфигурации

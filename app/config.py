@@ -26,3 +26,4 @@ class Config(object):
     #ВК
     VK_ACCESS_TOKEN = os.getenv('VK_ACCESS_TOKEN')
     GROUP_ID = os.getenv('GROUP_ID')
+    CHAT_ID = os.getenv('CHAT_ID')

@@ -4,6 +4,7 @@ from app import Config
 access_token = Config.VK_ACCESS_TOKEN
 group_id = Config.GROUP_ID
 
+
 def post_vk_group(title, description):
 
     # Текст сообщения
@@ -14,8 +15,9 @@ def post_vk_group(title, description):
 
     # Параметры запроса
     payload = {
-        'owner_id': group_id,  # ID группы с отрицательным значением
+        'owner_id': -int(group_id),  # ID группы с отрицательным значением
         'message': message,
+        'from_group': 1,
         'access_token': access_token,
         'v': '5.131'
     }
@@ -23,5 +25,12 @@ def post_vk_group(title, description):
     # Отправка POST-запроса
     response = requests.post(url, data=payload)
 
-    # Возврат результата в виде JSON
-    return response.json()
+    # Обработка ответа
+    if response.status_code == 200:
+        response_json = response.json()
+        if 'error' in response_json:
+            print(f"Ошибка при публикации поста: {response_json['error']['error_msg']}")
+        else:
+            print("Пост успешно опубликован!")
+    else:
+        print(f"Ошибка: {response.status_code} - {response.text}")
