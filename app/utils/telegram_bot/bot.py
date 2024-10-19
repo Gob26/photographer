@@ -1,14 +1,14 @@
 from dotenv import load_dotenv
 import os
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters
+
+from app import Config
 from app.utils.telegram_bot.handlers import (
     start, show_menu, process_login, process_add_article, process_add_photosession,
     process_add_service, process_category_selection, handle_message
 )
 
-load_dotenv()  # Это загрузит переменные окружения из файла .env
-telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')
-
+telegram_token = Config.TELEGRAM_BOT_TOKEN
 
 def main() -> None:
     """

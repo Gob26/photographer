@@ -1,10 +1,14 @@
 import os
 from crypt import methods
 import logging
+
+from decorator import append
 from flask import Blueprint, render_template, request, redirect, url_for, current_app, flash
 from sqlalchemy.testing.plugin.plugin_base import logging
 from werkzeug.utils import secure_filename
 from flask_login import login_required
+
+from app.utils.Vk.vk_posting import post_vk_group
 from ..forms import CreatePhotosessionForm
 from app.utils.functions import allowed_file
 from app.models.photosession import Photo, Category, Photosession
@@ -50,7 +54,8 @@ def create_photoshoot():
         # Проверяем, существует ли папка для данной категории, если нет — создаем
         if not os.path.exists(category_folder):
             os.makedirs(category_folder)
-
+        #Сохраняем ссылки на фото для ВК
+        #photo_links = []
         # Обрабатываем загруженные фотографии
         photos = request.files.getlist('photos')
         for photo in photos:
@@ -68,11 +73,18 @@ def create_photoshoot():
                     # Создаем запись фотографии в базе данных
                     new_photo = Photo(filename=filename, photosession_id=new_photoshoot.id)
                     db.session.add(new_photo)
+                    # Добавляем ссылки на фото в список для BK
+                    #photo_links.append(f"photo{new_photoshoot.id}_{new_photo.id}")  # Пример ссылки, измените по необходимости
                 except Exception as e:
                     flash(f'Ошибка при сохранении фотографии: {str(e)}', 'danger')
 
         # Сохраняем изменения в базе данных
         db.session.commit()
+        # Отправляем данные в ВК
+        post_vk_group(
+            title=new_photoshoot.title,
+            description=new_photoshoot.meta_description
+        )
 
         # Выводим сообщение об успешном создании фотосессии
         flash('Фотосессия успешно создана!', 'success')

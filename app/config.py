@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class Config(object):
     APPNAME = 'app'                                    # Имя приложения
     ROOT = os.path.abspath(os.path.dirname(__file__))  # Корень приложения (файл, где находится конфигурация)
@@ -20,3 +24,5 @@ class Config(object):
     TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
     #ВК
+    VK_ACCESS_TOKEN = os.getenv('VK_ACCESS_TOKEN')
+    GROUP_ID = os.getenv('GROUP_ID')
