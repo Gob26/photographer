@@ -11,7 +11,7 @@ from flask_login import login_required
 from app.utils.Vk.vk_posting import post_vk_group
 from app.utils.telegram_bot.post_to_socials import send_photosession_to_telegram
 from ..forms import CreatePhotosessionForm
-from app.utils.functions import allowed_file
+from app.utils.functions import allowed_file, optimize_image
 from app.models.photosession import Photo, Category, Photosession
 from ..extensions import db
 
@@ -59,33 +59,34 @@ def create_photoshoot():
         photo_links = []
         # Обрабатываем загруженные фотографии
         photos = request.files.getlist('photos')
+        # В обработке фотографий меняем код на:
         for photo in photos:
             if photo and allowed_file(photo.filename):
-                # Генерируем безопасное имя файла
-                filename = secure_filename(photo.filename)
-
-                # Формируем полный путь для сохранения фотографии
-                photo_path = os.path.join(category_folder, filename)
-
                 try:
-                    # Сохраняем файл по указанному пути
-                    photo.save(photo_path)
-
+                    # Оптимизируем фото
+                    optimized_photo, new_filename = optimize_image(photo)
+                    
+                    # Формируем полный путь для сохранения фотографии
+                    photo_path = os.path.join(category_folder, new_filename)
+                    
+                    # Сохраняем оптимизированный файл
+                    with open(photo_path, 'wb') as f:
+                        f.write(optimized_photo.getvalue())
+                    
                     # Создаем запись фотографии в базе данных
-                    new_photo = Photo(filename=filename, photosession_id=new_photoshoot.id)
+                    new_photo = Photo(filename=new_filename, photosession_id=new_photoshoot.id)
                     db.session.add(new_photo)
-                    # Добавляем ссылки на фото в список для BK
-                    photo_links.append(f"{category_folder}/{filename}")  # Пример ссылки, измените по необходимости
+                    
+                    # Добавляем ссылки на фото в список для ВК
+                    photo_links.append(f"{category_folder}/{new_filename}")
+                    
                 except Exception as e:
                     flash(f'Ошибка при сохранении фотографии: {str(e)}', 'danger')
 
         # Сохраняем изменения в базе данных
         db.session.commit()
         # Отправляем данные в ВК
-        post_vk_group(
-            title=new_photoshoot.title,
-            description=new_photoshoot.meta_description
-        )
+        post_vk_group(new_photoshoot)
         # Отправляем данные о фотосессии в Telegram
         send_photosession_to_telegram(new_photoshoot, photo_links)
         # Выводим сообщение об успешном создании фотосессии

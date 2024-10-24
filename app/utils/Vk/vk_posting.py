@@ -1,14 +1,17 @@
 import requests
+from flask import url_for
+
 from app import Config
 
 access_token = Config.VK_ACCESS_TOKEN
 group_id = Config.GROUP_ID
 
 
-def post_vk_group(title, description):
+def post_vk_group(photosession):
 
     # Текст сообщения
-    message = f"{title} \n {description}"
+    message = (f"{photosession.title} \n\n {photosession.meta_description} "
+               f"\n\n {url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id, _external=True)}")
 
     # URL для API ВКонтакте
     url = "https://api.vk.com/method/wall.post"

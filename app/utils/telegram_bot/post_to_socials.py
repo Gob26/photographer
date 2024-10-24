@@ -1,6 +1,5 @@
 import requests
 from flask import url_for
-
 from app import Config
 
 
@@ -16,6 +15,7 @@ def send_photosession_to_telegram(photosession, photo_paths):
 
     # Отправляем сообщение и фотографии по очереди
     url = f'https://api.telegram.org/bot{telegram_token}/sendPhoto'
+
 
     # Сначала отправим текст сообщения
     requests.post(f'https://api.telegram.org/bot{telegram_token}/sendMessage', json={
