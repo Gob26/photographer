@@ -4,7 +4,7 @@ from crypt import methods
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from werkzeug.utils import secure_filename
-from app.utils.functions import allowed_file
+from app.utils.functions import allowed_file, generate_unique_slug
 from flask_login import login_required
 from ..extensions import db
 from ..models.post import Post
@@ -62,7 +62,8 @@ def create():
         title_post = request.form.get('title_post')
         content_post = request.form.get('content_post')
         snippet_post = request.form.get('snippet_post')
-
+        slug = generate_unique_slug(title_post)
+        # Обработка новых изображений
         uploaded_files = request.files.getlist('images')
         image_paths = save_uploaded_files(uploaded_files)
 
@@ -70,7 +71,7 @@ def create():
             logging.warning("No valid images uploaded.")
             return 'Не загружены допустимые изображения', 400
 
-        post = Post(title=title_post, content=content_post, snippet=snippet_post, images=image_paths)
+        post = Post(title=title_post, slug=slug, content=content_post, snippet=snippet_post, images=image_paths)
 
         try:
             db.session.add(post)
@@ -93,7 +94,7 @@ def update(post_id):
         post.title = request.form.get('title_post')
         post.content = request.form.get('content_post')
         post.snippet = request.form.get('snippet_post')
-
+        post.slug = generate_unique_slug(Post,post.title)
         # Обработка новых изображений
         uploaded_files = request.files.getlist('images')
         image_paths = save_uploaded_files(uploaded_files)

@@ -12,7 +12,7 @@
             <div class="col-md-4">
                 <div class="card h-100 shadow-sm hover-effect">
                     {% if post.images and post.images|length > 0 %}
-                    <a href="{{ url_for('post.post_detail', post_id=post.id) }}" class="card-img-link">
+                    <a href="{{ url_for('post.post_detail', slug=post.slug) }}" class="card-img-link">
                         <img src="{{ url_for('static', filename='upload/blog/' + post.images[0]) }}" alt="{{ post.title }}" class="card-img-top">
                     </a>
                     {% endif %}
@@ -23,16 +23,16 @@
                         </div>
                         <div class="mt-auto">
                             <p class="text-muted mb-2">{{ post.created_at.strftime('%d.%m.%Y') }}</p>
-                            <a href="{{ url_for('post.post_detail', post_id=post.id) }}" class="btn btn-primary btn-sm read-more">Читать далее</a>
+                            <a href="{{ url_for('post.post_detail', slug=post.slug) }}" class="btn btn-primary btn-sm read-more">Читать далее</a>
                         </div>
                     </div>
                     {% if current_user.is_authenticated %}
                     <div class="card-footer bg-transparent">
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('post.update', post_id=post.id) }}" class="btn btn-outline-secondary btn-sm me-2" title="Редактировать">
+                            <a href="{{ url_for('post.update', slug=post.slug) }}" class="btn btn-outline-secondary btn-sm me-2" title="Редактировать">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
-                            <form method="POST" action="{{ url_for('post.delete', post_id=post.id) }}">
+                            <form method="POST" action="{{ url_for('post.delete', slug=post.slug) }}">
                                 <button type="submit" class="btn btn-outline-danger btn-sm" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить этот пост?');">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>

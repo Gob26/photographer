@@ -8,7 +8,7 @@ class Config(object):
     ROOT = os.path.abspath(os.path.dirname(__file__))  # Корень приложения (файл, где находится конфигурация)
     UPLOAD_PATH = os.path.join('static', 'upload')     # Путь для загрузки файлов
     SERVER_PATH = os.path.join(ROOT, UPLOAD_PATH)      # Полный путь к папке загрузок
- 
+
 
     USER = os.environ.get('POSTGRES_USER', 'anna')
     PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'annaanna')
@@ -27,3 +27,13 @@ class Config(object):
     VK_ACCESS_TOKEN = os.getenv('VK_ACCESS_TOKEN')
     GROUP_ID = os.getenv('GROUP_ID')
     CHAT_ID = os.getenv('CHAT_ID')
+
+    # Настройки безопасности
+    SECURITY_PASSWORD_SALT = 'my_precious_salt'  # Уникальное значение для соли
+    SECURITY_PASSWORD_HASH = 'bcrypt'  # Используем bcrypt для хеширования паролей
+    FLASK_ADMIN_SWATCH = 'cerulean'  # Тема для Flask-Admin
+    SECURITY_USER_IDENTITY_ATTRIBUTES = 'fs_uniquifier'
+
+    # Другие настройки
+    CACHE_TYPE = 'simple'  # Используем простой кэш
+    CACHE_DEFAULT_TIMEOUT = 900

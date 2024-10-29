@@ -11,7 +11,7 @@ from flask_login import login_required
 from app.utils.Vk.vk_posting import post_vk_group
 from app.utils.telegram_bot.post_to_socials import send_photosession_to_telegram
 from ..forms import CreatePhotosessionForm
-from app.utils.functions import allowed_file, optimize_image
+from app.utils.functions import allowed_file, generate_unique_slug, optimize_image
 from app.models.photosession import Photo, Category, Photosession
 from ..extensions import db
 
@@ -32,6 +32,9 @@ def create_photoshoot():
         # Обрабатываем координаты
         latitude, longitude = form.process_coordinates()
 
+        # Генерируем слаг для фотосессии
+        slug = generate_unique_slug(Photosession, form.title.data)
+
         # Создаем новый объект фотосессии
         new_photoshoot = Photosession(
             title=form.title.data,
@@ -40,6 +43,7 @@ def create_photoshoot():
             category=category,
             latitude=latitude,  # Координаты могут быть None
             longitude=longitude,  # Координаты могут быть None
+            slug=slug,
         )
 
         # Добавляем фотосессию в базу данных
@@ -143,6 +147,10 @@ def update(category_name, id):  # Changed function name from update_photoshoot t
             photosession.meta_description = form.meta_description.data
             photosession.content = form.content.data
             photosession.category = Category[form.category.data]
+
+            # Генерация нового слага
+            photosession.slug = generate_unique_slug(Photosession, form.title.data)
+
 
             # Handle photo uploads
             upload_folder = current_app.config['SERVER_PATH']

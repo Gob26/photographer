@@ -2,12 +2,25 @@ from PIL import Image
 import secrets
 from flask import current_app
 import os
-
+from io import BytesIO
 import random
 from datetime import datetime, date
-
 from app.models.photosession import Photosession
+from slugify import slugify
+from app import db
 
+#Генерация слага 
+def generate_unique_slug(model, title):
+    base_slug = slugify(title)
+    slug = base_slug
+    counter = 1
+
+    # Проверка уникальности slug
+    while db.session.query(model).filter_by(slug=slug).first() is not None:
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+        
+    return slug
 
 def get_photosessions_from_db():
     return Photosession.query.all()  # Получаем все фотосессии из базы данных
@@ -25,9 +38,8 @@ def get_random_photosessions(count=6):
     return random.sample(photosessions, min(len(photosessions), count))
 
 
-from PIL import Image
-import os
-from io import BytesIO
+# Функция для оптимизации изображения
+
 
 def optimize_image(image_file, max_size_kb=200, quality_start=95):
     """
@@ -104,6 +116,9 @@ def optimize_image(image_file, max_size_kb=200, quality_start=95):
     # Возвращаем буфер с изображением и новое имя файла
     output_buffer.seek(0)
     return output_buffer, new_filename
+
+
+# Функции для работы с изображениями
 
 
 def save_picture(picture):   #Сохраняем уменьшенное изображение и передаем его новое имя
