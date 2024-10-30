@@ -11,6 +11,7 @@ from app.extensions import db, bcrypt
 from app.__init__ import create_app
 from app.models.services import Service
 from app.utils.telegram_bot.utils import category_menu, menu
+from app.utils.functions import generate_unique_slug
 
 app = create_app()
 
@@ -331,8 +332,9 @@ async def finalize_article(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     content = context.user_data['content']
     snippet = context.user_data['snippet']
     images = context.user_data.get('images', [])
+    slug = generate_unique_slug(Post, title)
 
-    post = Post(title=title, content=content, snippet=snippet, images=images)
+    post = Post(title=title, content=content, snippet=snippet, images=images, slug=slug)
     db.session.add(post)
     db.session.commit()
 
@@ -362,11 +364,12 @@ async def finalize_photosession(update: Update, context: ContextTypes.DEFAULT_TY
     if not isinstance(category_name, str):
         await update.message.reply_text("Ошибка: неверная категория фотосессии.")
         return
-
+    slug = generate_unique_slug(Photosession, title)
     try:
         new_photoshoot = Photosession(
             title=title,
             meta_description=meta_description,
+            slug=slug,
             content=content,
             category=category_name,  # Используем category_name
             created_at=datetime.utcnow(),

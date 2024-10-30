@@ -37,27 +37,16 @@ class Photosession(db.Model):
     longitude = db.Column(db.Float, nullable=True)
     slug = db.Column(db.String, unique=True, nullable=False)
 
-
-    def __init__(self, title, meta_description=None, content=None, category=None, show_on_main=False, latitude=None, longitude=None):
+    def __init__(self, title, slug, meta_description, content, category, created_at=None, show_on_main=False, latitude=None, longitude=None):
         self.title = title
+        self.slug = slug
         self.meta_description = meta_description
         self.content = content
         self.category = category
+        self.created_at = created_at or datetime.utcnow()
         self.show_on_main = show_on_main
-        self.latitude = latitude
-        self.longitude = longitude
-        self.slug = self.generate_slug(title)  # Перемещено в конец и передаем title
-
-    @staticmethod
-    def generate_slug(title):  # Сделали метод статическим и передаем title
-        base_slug = slugify(title)
-        slug = base_slug
-        counter = 1
-        # Проверяем уникальность slug
-        while Photosession.query.filter_by(slug=slug).first() is not None:
-            slug = f"{base_slug}-{counter}"
-            counter += 1
-        return slug
+        self.latitude = latitude  # Добавляем latitude
+        self.longitude = longitude  # Добавляем longitude
 
 
 class Photo(db.Model):

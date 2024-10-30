@@ -98,15 +98,16 @@ def create_photoshoot():
 
         # Перенаправляем пользователя на страницу созданной фотосессии
         return redirect(
-            url_for('photosession.view_photoshoot', category_name=new_photoshoot.category.name, id=new_photoshoot.id))
+            url_for('photosession.view_photoshoot', category_name=new_photoshoot.category.name, id=new_photoshoot.id, slug=new_photoshoot.slug)
 
+        )
     # Если метод GET, отображаем форму создания фотосессии
     return render_template('photosession/create_photoshoot.html', form=form, categories=Category)
 
 
-@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>/delete', methods=['POST'])
+@photoshoot_bp.route('/photosessions/<string:category_name>/<string:slug>/<int:id>/delete', methods=['POST'])
 @login_required
-def delete(category_name, id):
+def delete(category_name, slug, id):
     photosession = Photosession.query.get_or_404(id)
 
     try:
@@ -131,12 +132,12 @@ def delete(category_name, id):
         db.session.rollback()
         current_app.logger.error(f"Error deleting photosession: {str(e)}")
         flash('При удалении фотосессии произошла ошибка', 'danger')
-        return redirect(url_for('photosession.view_photoshoot', category_name=category_name, id=id))
+        return redirect(url_for('photosession.view_photoshoot', category_name=category_name, slug=slug, id=id))
 
 
-@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>/update', methods=['GET', 'POST'])
+@photoshoot_bp.route('/photosessions/<string:category_name>/<string:slug>/<int:id>/update', methods=['GET', 'POST'])
 @login_required
-def update(category_name, id):  # Changed function name from update_photoshoot to update
+def update(category_name,slug, id):  # Changed function name from update_photoshoot to update
     photosession = Photosession.query.get_or_404(id)
     form = CreatePhotosessionForm(obj=photosession)
 
@@ -190,19 +191,20 @@ def update(category_name, id):  # Changed function name from update_photoshoot t
     # If GET request or form validation fails, render the update form
     return render_template('photosession/update_photoshoot.html', form=form, photosession=photosession)
 
+
 #показ конкретной фотосессии
-@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>', methods=['GET'])
-def view_photoshoot(category_name, id):
-    # Проверяем, что категория существует в enum
+@photoshoot_bp.route('/photosessions/<string:category_name>/<int:id>-<string:slug>', methods=['GET'])
+def view_photoshoot(category_name, id, slug):
+    # проверка категории и загрузка фотосессии
     try:
         category = Category[category_name]
     except KeyError:
         flash('Категория не найдена', 'danger')
         return redirect(url_for('photosession.list_photoshoots'))
 
-    # Отображаем фотосессию по ID
     photoshoot = Photosession.query.get_or_404(id)
 
+    # Отображение страницы фотосессии
     return render_template('photosession/view_photoshoot.html', photoshoot=photoshoot)
 
 

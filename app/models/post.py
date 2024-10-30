@@ -14,12 +14,13 @@ class Post(db.Model):
     images = db.Column(JSON)   # храним список ссылок на изображения
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, title):
+    def __init__(self, title, slug, content, snippet=None, images=None):
         self.title = title
-        self.slug = self.generate_slug()
+        self.slug = slug
+        self.content = content
+        self.snippet = snippet
+        self.images = images
 
-    def generate_slug(self):
-        return slugify(self.title)
 
     def __repr__(self):
         return f'<Post {self.title}>' # аналог pprint для разраба , пригодится в будущем

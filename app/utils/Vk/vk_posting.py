@@ -11,7 +11,7 @@ def post_vk_group(photosession):
 
     # Текст сообщения
     message = (f"{photosession.title} \n\n {photosession.meta_description} "
-               f"\n\n {url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id, _external=True)}")
+               f"\n\n {url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id, slug=photosession.slug, _external=True)}")
 
     # URL для API ВКонтакте
     url = "https://api.vk.com/method/wall.post"

@@ -1,9 +1,9 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-    <h1>Все фотосессии</h1>
-    
-    {# Отображение категорий #}
+    <h1>All Photoshoots</h1>
+
+    {# Display categories #}
     <div class="categories">
         {% for category_name, category in categories.items() %}
             <a href="{{ url_for('photosession.category_photoshoots', category_name=category_name) }}">
@@ -12,31 +12,33 @@
         {% endfor %}
     </div>
 
-    {# Отображение фотосессий #}
-    {% for photoshoot in photoshoots.items %}
-        <div class="photoshoot">
-            <h2>{{ photoshoot.title }}</h2>
-            <p>Категория: {{ photoshoot.category.value }}</p>
+    {# Display photoshoots #}
+    <div class="photoshoots-container">
+        {% for photoshoot in photoshoots.items %}
+            <div class="photoshoot-card">
+                <h2>{{ photoshoot.title }}</h2>
+                <p>Category: {{ photoshoot.category.value }}</p>
 
-            {# Отображение первого фото #}
-            {% if photoshoot.photos|length > 0 %}
-                <div class="photo-gallery">
-                    <img src="{{ url_for('static', filename='upload/' ~ photoshoot.category.name ~ '/' ~ photoshoot.photos[0].filename) }}" alt="{{ photoshoot.title }}" class="photoshoot-image" loading="lazy">
-                </div>
-            {% else %}
-                <p>Нет доступных фотографий</p>
-            {% endif %}
+                {# Display first photo #}
+                {% if photoshoot.photos|length > 0 %}
+                    <div class="photo-gallery">
+                        <img src="{{ url_for('static', filename='upload/' ~ photoshoot.category.name ~ '/' ~ photoshoot.photos[0].filename) }}" alt="{{ photoshoot.title }}" class="photoshoot-image" loading="lazy">
+                    </div>
+                {% else %}
+                    <p>No photos available</p>
+                {% endif %}
 
-            <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id) }}">
-                Подробнее
-            </a>
-        </div>
-    {% endfor %}
+                <a href="{{ url_for('photosession.view_photoshoot', category_name=photoshoot.category.name, id=photoshoot.id, slug=photoshoot.slug) }}">
+                    View More
+                </a>
+            </div>
+        {% endfor %}
+    </div>
 
-    {# Пагинация #}
+    {# Pagination #}
     <div class="pagination">
         {% if photoshoots.has_prev %}
-            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.prev_num) }}">Предыдущая</a>
+            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.prev_num) }}">Previous</a>
         {% endif %}
 
         {% for page in photoshoots.iter_pages() %}
@@ -52,23 +54,41 @@
         {% endfor %}
 
         {% if photoshoots.has_next %}
-            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.next_num) }}">Следующая</a>
+            <a href="{{ url_for('photosession.list_photoshoots', page=photoshoots.next_num) }}">Next</a>
         {% endif %}
     </div>
+{% endblock %}
+
 <style>
-    .photo-gallery {
-    width: 150px; /* Фиксированная ширина контейнера */
-    height: 100px; /* Фиксированная высота контейнера */
-    overflow: hidden; /* Скрытие переполняющего содержимого */
-    margin-bottom: 10px; /* Отступ снизу для разделения изображений */
-    border: 1px solid #ccc; /* Параметры границы */
-    border-radius: 4px; /* Закругление углов */
+.photoshoots-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.photoshoot-card {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+}
+
+.photo-gallery {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .photoshoot-image {
-    width: 100%; /* Ширина изображения 100% от родительского контейнера */
-    height: 100%; /* Высота изображения 100% от родительского контейнера */
-    object-fit: cover; /* Сохранение пропорций изображения с обрезкой */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-{% endblock %}
+@media (max-width: 767px) {
+    .photoshoots-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

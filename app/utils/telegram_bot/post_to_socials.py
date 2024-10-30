@@ -10,7 +10,7 @@ def send_photosession_to_telegram(photosession, photo_paths):
         f"📸 Новая фотосессия !!!\n\n"
         f"**Название:** {photosession.title}\n"
         f"**Описание:** {photosession.meta_description}\n"
-        f"**Ссылка:** {url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id, _external=True)}"
+        f"**Ссылка:** {url_for('photosession.view_photoshoot', category_name=photosession.category.name, id=photosession.id, slug=photosession.slug, _external=True)}"
     )
 
     # Отправляем сообщение и фотографии по очереди

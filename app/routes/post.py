@@ -47,12 +47,13 @@ def all():
     return render_template('post/all.html', posts=posts)
 
 
-@post.route('/post/<int:post_id>', methods=['GET'])
-def post_detail(post_id):
-    post = Post.query.get(post_id)
+@post.route('/post/<slug>', methods=['GET'])
+def post_detail(slug):
+    post = Post.query.filter_by(slug=slug).first()  # Получение поста по слагу
     if post is None:
         return 'Пост не найден', 404
     return render_template('post/detail.html', post=post)
+
 
 
 @post.route('/post/create', methods=['POST', 'GET'])
@@ -62,7 +63,8 @@ def create():
         title_post = request.form.get('title_post')
         content_post = request.form.get('content_post')
         snippet_post = request.form.get('snippet_post')
-        slug = generate_unique_slug(title_post)
+        slug = generate_unique_slug(Post, title_post)
+
         # Обработка новых изображений
         uploaded_files = request.files.getlist('images')
         image_paths = save_uploaded_files(uploaded_files)
@@ -85,10 +87,10 @@ def create():
         return render_template('post/create.html')
 
 
-@post.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
+@post.route('/post/<slug>/update', methods=['POST', 'GET'])
 @login_required
-def update(post_id):
-    post = Post.query.get_or_404(post_id)
+def update(slug):
+    post = Post.query.filter_by(slug=slug).first_or_404()
 
     if request.method == 'POST':
         post.title = request.form.get('title_post')
@@ -113,10 +115,10 @@ def update(post_id):
     return render_template('post/update.html', post=post)
 
 
-@post.route('/post/<int:post_id>/delete', methods=['POST'])
+@post.route('/post/<slug>/delete', methods=['POST'])  # Измените путь здесь
 @login_required
-def delete(post_id):
-    post = Post.query.get_or_404(post_id)
+def delete(slug):
+    post = Post.query.filter_by(slug=slug).first_or_404()  # Измените здесь на filter_by
 
     try:
         db.session.delete(post)
@@ -127,5 +129,6 @@ def delete(post_id):
     except Exception as e:
         logging.error(f"Error deleting post: {str(e)}")
         return 'При удалении поста произошла ошибка', 500
+
 
 

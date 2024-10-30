@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-light">Обновить пост</h1>
-    <form method="POST" enctype="multipart/form-data" class="dark-grey-form p-3 rounded">
+    <form method="POST" action="{{ url_for('post.update', slug=post.slug) }}" enctype="multipart/form-data" class="dark-grey-form p-3 rounded">
         <div class="form-group">
             <label for="title_post" class="text-light">Заголовок поста</label>
             <input type="text" class="form-control mb-2" id="title_post" name="title_post" value="{{ post.title }}" required>
@@ -43,6 +43,5 @@
         <button type="submit" class="btn btn-primary">Обновить пост</button>
     </form>
 </div>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blocks/create_post.css') }}">
 {% endblock %}
