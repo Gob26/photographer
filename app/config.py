@@ -37,3 +37,7 @@ class Config(object):
     # Другие настройки
     CACHE_TYPE = 'simple'  # Используем простой кэш
     CACHE_DEFAULT_TIMEOUT = 900
+
+    # ИИ
+    API_KEY = os.getenv('API_KEY')
+    URL = os.getenv('URL')

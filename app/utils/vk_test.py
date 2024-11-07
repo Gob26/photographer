@@ -1,4 +1,5 @@
 import requests
+from app import Config
 
 # Укажите ваш пользовательский токен доступа и ID группы
 VK_ACCESS_TOKEN = 'vk1.a.xUW3TJ_A4wu2gAC9lwQYDTxly0O1Z_K_sJp1Mv6xMbOA8to9d2Zty4NIvqsMjguQknu-DOY1-qWsrC96Ai5QbxOPp3ugfwxcHXiODjPf8Rdmd3JzPi_X_U5HitvJg8MEB6Guc5rSsKjOTeBleQsZTkoMfNcW5hB1fwvx-F6UjLatSg2W7ayfmjBWXkRVLycrt_2b5MWVgv73pFeMiH2MeA'
