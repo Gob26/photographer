@@ -9,7 +9,6 @@ class Config(object):
     UPLOAD_PATH = os.path.join('static', 'upload')     # Путь для загрузки файлов
     SERVER_PATH = os.path.join(ROOT, UPLOAD_PATH)      # Полный путь к папке загрузок
 
-
     USER = os.environ.get('POSTGRES_USER', 'anna')
     PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'annaanna')
     HOST = os.environ.get('POSTGRES_HOST', '127.0.0.1')

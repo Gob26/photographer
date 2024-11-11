@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: postgres:16  # Вы можете явно указать нужную версию
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5434:5432"  # Оставляем порт 5434 на внешней машине, но PostgreSQL использует 5432 по умолчанию
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app  # Dockerfile для Flask-приложения
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432  # Используем стандартный порт PostgreSQL
+      - POSTGRES_DB=${POSTGRES_DB}
+    depends_on:
+      - db
+    networks:
+      - app_network
+    ports:
+      - "5000:5000"  # Открываем порт для доступа к Flask-приложению
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
