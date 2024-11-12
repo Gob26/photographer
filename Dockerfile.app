@@ -7,7 +7,7 @@ WORKDIR /app
 # Копируем зависимости и устанавливаем их
 COPY requirements.txt /app/
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y supervisor\
     build-essential \
     meson \
     pkg-config \
@@ -21,5 +21,8 @@ COPY . /app
 # Открываем порт 5000 для доступа к приложению Flask
 EXPOSE 5000
 
-# Запуск Flask-приложения
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+# Запуск Flask-приложения и Telegram-бота через Supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
+
+
